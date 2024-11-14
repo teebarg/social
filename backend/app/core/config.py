@@ -37,9 +37,9 @@ class Settings(BaseSettings):
     FRONTEND_HOST: str = "http://localhost:5173"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
+    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
+        []
+    )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -117,6 +117,15 @@ class Settings(BaseSettings):
         )
 
         return self
+
+    SUPABASE_URL: str = ""
+    SUPABASE_KEY: str = ""
+
+    TWITTER_API_KEY: str = ""
+    TWITTER_API_SECRET_KEY: str = ""
+    TWITTER_ACCESS_TOKEN: str = ""
+    TWITTER_BEARER_TOKEN: str = ""
+    TWITTER_ACCESS_TOKEN_SECRET: str = ""
 
 
 settings = Settings()  # type: ignore

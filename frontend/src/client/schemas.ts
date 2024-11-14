@@ -232,7 +232,19 @@ export const $UserCreate = {
       type: "boolean",
       default: false,
     },
-    full_name: {
+    first_name: {
+      type: "any-of",
+      contains: [
+        {
+          type: "string",
+          maxLength: 255,
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    last_name: {
       type: "any-of",
       contains: [
         {
@@ -269,7 +281,19 @@ export const $UserPublic = {
       type: "boolean",
       default: false,
     },
-    full_name: {
+    first_name: {
+      type: "any-of",
+      contains: [
+        {
+          type: "string",
+          maxLength: 255,
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    last_name: {
       type: "any-of",
       contains: [
         {
@@ -303,7 +327,19 @@ export const $UserRegister = {
       maxLength: 40,
       minLength: 8,
     },
-    full_name: {
+    first_name: {
+      type: "any-of",
+      contains: [
+        {
+          type: "string",
+          maxLength: 255,
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    last_name: {
       type: "any-of",
       contains: [
         {
@@ -341,7 +377,19 @@ export const $UserUpdate = {
       type: "boolean",
       default: false,
     },
-    full_name: {
+    first_name: {
+      type: "any-of",
+      contains: [
+        {
+          type: "string",
+          maxLength: 255,
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    last_name: {
       type: "any-of",
       contains: [
         {
@@ -371,7 +419,19 @@ export const $UserUpdate = {
 
 export const $UserUpdateMe = {
   properties: {
-    full_name: {
+    first_name: {
+      type: "any-of",
+      contains: [
+        {
+          type: "string",
+          maxLength: 255,
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
+    last_name: {
       type: "any-of",
       contains: [
         {

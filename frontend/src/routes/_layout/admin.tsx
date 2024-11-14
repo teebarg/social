@@ -49,7 +49,9 @@ function UsersTable() {
   const { page } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const setPage = (page: number) =>
-    navigate({ search: (prev: {[key: string]: string}) => ({ ...prev, page }) })
+    navigate({
+      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
+    })
 
   const {
     data: users,
@@ -85,7 +87,7 @@ function UsersTable() {
           {isPending ? (
             <Tbody>
               <Tr>
-                {new Array(4).fill(null).map((_, index) => (
+                {new Array(5).fill(null).map((_, index) => (
                   <Td key={index}>
                     <SkeletonText noOfLines={1} paddingBlock="16px" />
                   </Td>
@@ -97,11 +99,23 @@ function UsersTable() {
               {users?.data.map((user) => (
                 <Tr key={user.id}>
                   <Td
-                    color={!user.full_name ? "ui.dim" : "inherit"}
+                    color={!user.first_name ? "ui.dim" : "inherit"}
                     isTruncated
                     maxWidth="150px"
                   >
-                    {user.full_name || "N/A"}
+                    {user.first_name || "N/A"}
+                    {currentUser?.id === user.id && (
+                      <Badge ml="1" colorScheme="teal">
+                        You
+                      </Badge>
+                    )}
+                  </Td>
+                  <Td
+                    color={!user.last_name ? "ui.dim" : "inherit"}
+                    isTruncated
+                    maxWidth="150px"
+                  >
+                    {user.last_name || "N/A"}
                     {currentUser?.id === user.id && (
                       <Badge ml="1" colorScheme="teal">
                         You

@@ -5,6 +5,7 @@ Revises:
 Create Date: 2023-11-24 22:55:43.195942
 
 """
+
 import sqlalchemy as sa
 import sqlmodel.sql.sqltypes
 from alembic import op
@@ -23,7 +24,8 @@ def upgrade():
         sa.Column("email", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
         sa.Column("is_superuser", sa.Boolean(), nullable=False),
-        sa.Column("full_name", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("first_name", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("last_name", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "hashed_password", sqlmodel.sql.sqltypes.AutoString(), nullable=False
