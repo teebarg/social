@@ -20,16 +20,17 @@ function Layout() {
     const { isLoading } = useAuth();
 
     return (
-        <Flex maxW="large" h="auto" position="relative">
-            <Sidebar />
-            {isLoading ? (
+        <div className="w-full flex h-auto relative bg-red-600">
+            {/* <Sidebar /> */}
+            {/* {isLoading ? (
                 <Flex justify="center" align="center" height="100vh" width="full">
                     <Spinner size="xl" color="ui.main" />
                 </Flex>
             ) : (
                 <Outlet />
             )}
-            <UserMenu />
-        </Flex>
+            <UserMenu /> */}
+            <p>Yoooooppppp</p>
+        </div>
     );
 }
