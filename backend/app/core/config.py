@@ -121,10 +121,10 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""
 
-    TWITTER_API_KEY: str = ""
-    TWITTER_API_SECRET_KEY: str = ""
-    TWITTER_ACCESS_TOKEN: str = ""
+    TWITTER_CONSUMER_KEY: str = ""
+    TWITTER_CONSUMER_SECRET: str = ""
     TWITTER_BEARER_TOKEN: str = ""
+    TWITTER_ACCESS_TOKEN: str = ""
     TWITTER_ACCESS_TOKEN_SECRET: str = ""
 
 

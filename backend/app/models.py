@@ -2,6 +2,7 @@ import uuid
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+from datetime import datetime
 
 
 # Shared properties
@@ -47,6 +48,7 @@ class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
+    drafts: list["Draft"] = Relationship(back_populates="user", cascade_delete=True)
 
 
 # Properties to return via API, id is always required
@@ -115,3 +117,73 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
+
+class TweetBase(SQLModel):
+    content: str  = Field(min_length=1, max_length=255)
+
+
+# Properties to receive on item creation
+class TweetCreate(TweetBase):
+    pass
+
+# Database model, database table inferred from class name
+class Tweet(TweetBase, table=True):
+    __tablename__ = "tweets"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    content: str = Field(max_length=255)
+    twitter_id: str = Field(max_length=255)
+    created_at: datetime = Field(default=datetime.now())
+
+
+# Properties to return via API, id is always required
+class TweetPublic(TweetBase):
+    id: uuid.UUID
+    owner_id: uuid.UUID
+
+
+class TweetsPublic(SQLModel):
+    data: list[ItemPublic]
+    count: int
+
+
+class DraftBase(SQLModel):
+    title: str = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1, max_length=255)
+    image_url: str | None = Field(default=None, max_length=255)
+    link_url: str | None = Field(default=None, max_length=255)
+    platform: str | None = Field(default=None, max_length=100)
+    is_published: bool = Field(default=False)
+
+
+# Properties to receive on Draft creation
+class DraftCreate(DraftBase):
+    pass
+
+
+# Properties to receive on Draft update
+class DraftUpdate(DraftBase):
+    title: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+    content: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+
+
+# Database model, database table inferred from class name
+class Draft(DraftBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    title: str = Field(max_length=255)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    )
+    user: User | None = Relationship(back_populates="drafts")
+
+
+# Properties to return via API, id is always required
+class DraftPublic(DraftBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+
+
+class DraftsPublic(SQLModel):
+    data: list[DraftPublic]
+    count: int
+    

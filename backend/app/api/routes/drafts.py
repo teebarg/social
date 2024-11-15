@@ -1,0 +1,109 @@
+import uuid
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
+from sqlmodel import func, select
+
+from app.api.deps import CurrentUser, SessionDep
+from app.models import Draft, DraftCreate, DraftPublic, DraftsPublic, DraftUpdate, Message
+
+router = APIRouter()
+
+
+@router.get("/", response_model=DraftsPublic)
+def read_items(
+    session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
+) -> Any:
+    """
+    Retrieve items.
+    """
+
+    if current_user.is_superuser:
+        count_statement = select(func.count()).select_from(Draft)
+        count = session.exec(count_statement).one()
+        statement = select(Draft).offset(skip).limit(limit)
+        items = session.exec(statement).all()
+    else:
+        count_statement = (
+            select(func.count())
+            .select_from(Draft)
+            .where(Draft.user_id == current_user.id)
+        )
+        count = session.exec(count_statement).one()
+        statement = (
+            select(Draft)
+            .where(Draft.user_id == current_user.id)
+            .offset(skip)
+            .limit(limit)
+        )
+        items = session.exec(statement).all()
+
+    return DraftsPublic(data=items, count=count)
+
+
+@router.get("/{id}", response_model=DraftPublic)
+def read_item(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
+    """
+    Get item by ID.
+    """
+    item = session.get(Draft, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    if not current_user.is_superuser and (item.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    return item
+
+
+@router.post("/", response_model=DraftPublic)
+def create_item(
+    *, session: SessionDep, current_user: CurrentUser, item_in: DraftCreate
+) -> Any:
+    """
+    Create new item.
+    """
+    item = Draft.model_validate(item_in, update={"user_id": current_user.id})
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return item
+
+
+@router.put("/{id}", response_model=DraftPublic)
+def update_item(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser,
+    id: uuid.UUID,
+    item_in: DraftUpdate,
+) -> Any:
+    """
+    Update an item.
+    """
+    item = session.get(Draft, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    if not current_user.is_superuser and (item.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    update_dict = item_in.model_dump(exclude_unset=True)
+    item.sqlmodel_update(update_dict)
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+    return item
+
+
+@router.delete("/{id}")
+def delete_item(
+    session: SessionDep, current_user: CurrentUser, id: uuid.UUID
+) -> Message:
+    """
+    Delete an item.
+    """
+    item = session.get(Item, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    if not current_user.is_superuser and (item.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    session.delete(item)
+    session.commit()
+    return Message(message="Item deleted successfully")
