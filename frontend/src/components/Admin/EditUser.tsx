@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { type ApiError, type UserPublic, type UserUpdate, UsersService } from "../../client";
-import useCustomToast from "../../hooks/useCustomToast";
-import { emailPattern, handleError, isEmpty } from "../../utils";
+import { emailPattern, handleError, isEmpty } from "@/utils";
 import { Modal } from "../modal";
-import { FormControl, Label } from "../ui/label";
-import { Input } from "../ui/input2";
+import { FormControl, Label } from "@/components/ui/label";
+import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import useCustomToast from "@/hooks/useCustomToast";
 
 interface EditUserProps {
     user: UserPublic;

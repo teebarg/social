@@ -95,11 +95,17 @@ services:
   frontend:
     restart: "no"
     ports:
-      - "5173:80"
+      - "5173:5173"
     build:
       context: ./frontend
+      dockerfile: Dockerfile.dev
       args:
         - NODE_ENV=development
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    platform: linux/amd64 # Patch for M1 Mac
 
   # playwright:
   #   build:

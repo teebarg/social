@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Calendar, Check, ChevronRight, CogSixTooth, Component, DocumentText, EcommerceIcon, User, Users, Window } from "nui-react-icons";
 import clsx from "clsx";
-import { Link, useMatch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { cn } from "../../utils";
+import type { UserPublic } from "@/client/models";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface MenuItem {
     label: string;
@@ -156,6 +158,8 @@ const MenuItemComponent: React.FC<{
 };
 
 const Sidebar: React.FC = () => {
+    const queryClient = useQueryClient();
+    const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const navItems: (MenuItem | SubMenuItem)[] = [
         {
@@ -234,6 +238,9 @@ const Sidebar: React.FC = () => {
                         </nav>
                     </React.Fragment>
                 ))}
+                <div className="mt-auto">
+                    {currentUser?.email && <p className="text-secondary text-sm p-2 max-w-44">Logged in as: {currentUser.email}</p>}
+                </div>
             </div>
         </div>
     );

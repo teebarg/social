@@ -5,9 +5,9 @@ import { type ApiError, type ItemCreate, ItemsService } from "../../client";
 import useCustomToast from "@/hooks/useCustomToast";
 import { handleError, isEmpty } from "../../utils";
 import { FormControl, Label } from "../ui/label";
-import { Input } from "../ui/input2";
-import { Button } from "../ui/button";
-import { Modal } from "../modal";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/modal";
 
 interface AddItemProps {
     isOpen: boolean;

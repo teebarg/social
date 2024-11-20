@@ -1,4 +1,3 @@
-// import { Box, Button, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input, useColorModeValue } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
@@ -6,8 +5,8 @@ import { type ApiError, type UpdatePassword, UsersService } from "../../client";
 import useCustomToast from "../../hooks/useCustomToast";
 import { confirmPasswordRules, handleError, isEmpty, passwordRules } from "../../utils";
 import { FormControl, Label } from "../ui/label";
-import { Input } from "../ui/input2";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface UpdatePasswordForm extends UpdatePassword {
     confirm_password: string;
@@ -20,7 +19,7 @@ const ChangePassword = () => {
         handleSubmit,
         reset,
         getValues,
-        formState: { errors, isSubmitting },
+        formState: { errors },
     } = useForm<UpdatePasswordForm>({
         mode: "onBlur",
         criteriaMode: "all",

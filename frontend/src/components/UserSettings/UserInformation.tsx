@@ -3,12 +3,12 @@ import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { type ApiError, type UserPublic, type UserUpdateMe, UsersService } from "../../client";
-import useAuth from "../../hooks/useAuth";
-import useCustomToast from "../../hooks/useCustomToast";
 import { cn, emailPattern, handleError, isEmpty } from "../../utils";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input2";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import useAuth from "@/hooks/useAuth";
+import useCustomToast from "@/hooks/useCustomToast";
 
 const UserInformation = () => {
     const queryClient = useQueryClient();
@@ -20,7 +20,7 @@ const UserInformation = () => {
         register,
         handleSubmit,
         reset,
-        formState: { errors },
+        formState: { errors, isDirty },
     } = useForm<UserPublic>({
         // mode: "onBlur",
         criteriaMode: "all",
@@ -65,7 +65,7 @@ const UserInformation = () => {
 
     return (
         <div>
-            <h2 className="py-1 font-semibold">User Information</h2>
+            <h2 className="py-1 font-semibold text-2xl">User Information</h2>
             <form>
                 <div>
                     <Label htmlFor="first_name">First name</Label>
@@ -92,7 +92,7 @@ const UserInformation = () => {
                                 required: "Last name is required",
                                 maxLength: {
                                     value: 30,
-                                    message: "This input must not exceed 10 characters",
+                                    message: "This input must not exceed 30 characters",
                                 },
                             })}
                             error={errors.last_name?.message}
@@ -125,7 +125,7 @@ const UserInformation = () => {
                                 color="primary"
                                 type="button"
                                 isLoading={mutation.isPending}
-                                disabled={!isEmpty(errors) || mutation.isPending}
+                                disabled={!isEmpty(errors) || !isDirty || mutation.isPending}
                             >
                                 Save
                             </Button>

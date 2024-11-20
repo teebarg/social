@@ -11,7 +11,7 @@ html {
 
 @font-face {
   font-family: 'Outfit';
-  src: url('../public/assets/fonts/Outfit-VariableFont_wght.ttf') format('truetype');
+  src: url('/assets/fonts/Outfit-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900; /* Variable font supports a range of weights */
   font-style: normal;
 }

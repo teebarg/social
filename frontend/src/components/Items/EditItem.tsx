@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { type ApiError, type ItemPublic, type ItemUpdate, ItemsService } from "../../client";
-import useCustomToast from "../../hooks/useCustomToast";
-import { handleError, isEmpty } from "../../utils";
 import { Modal } from "../modal";
 import { FormControl, Label } from "../ui/label";
-import { Input } from "../ui/input2";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { handleError, isEmpty } from "@/utils";
+import useCustomToast from "@/hooks/useCustomToast";
 
 interface EditItemProps {
     item: ItemPublic;
@@ -21,7 +21,7 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isDirty },
     } = useForm<ItemUpdate>({
         mode: "onBlur",
         criteriaMode: "all",
@@ -78,7 +78,7 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
                                         className="min-w-32"
                                         color="primary"
                                         type="submit"
-                                        disabled={!isEmpty(errors) || mutation.isPending}
+                                        disabled={!isEmpty(errors) || !isDirty || mutation.isPending}
                                         isLoading={mutation.isPending}
                                     >
                                         Save
