@@ -1,114 +1,106 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
-import { type ApiError, type ItemCreate, ItemsService } from "../../client"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { type ApiError, type ItemCreate, ItemsService } from "../../client";
+import useCustomToast from "@/hooks/useCustomToast";
+import { handleError, isEmpty } from "../../utils";
+import { FormControl, Label } from "../ui/label";
+import { Input } from "../ui/input2";
+import { Button } from "../ui/button";
+import { Modal } from "../modal";
 
 interface AddItemProps {
-  isOpen: boolean
-  onClose: () => void
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 const AddItem = ({ isOpen, onClose }: AddItemProps) => {
-  const queryClient = useQueryClient()
-  const showToast = useCustomToast()
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ItemCreate>({
-    mode: "onBlur",
-    criteriaMode: "all",
-    defaultValues: {
-      title: "",
-      description: "",
-    },
-  })
+    const queryClient = useQueryClient();
+    const showToast = useCustomToast();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<ItemCreate>({
+        mode: "onBlur",
+        criteriaMode: "all",
+        defaultValues: {
+            title: "",
+            description: "",
+        },
+    });
 
-  const mutation = useMutation({
-    mutationFn: (data: ItemCreate) =>
-      ItemsService.createItem({ requestBody: data }),
-    onSuccess: () => {
-      showToast("Success!", "Item created successfully.", "success")
-      reset()
-      onClose()
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
-    },
-  })
+    const mutation = useMutation({
+        mutationFn: (data: ItemCreate) => ItemsService.createItem({ requestBody: data }),
+        onSuccess: () => {
+            showToast.success("Success!", "Item created successfully.");
+            reset();
+            onClose();
+        },
+        onError: (err: ApiError) => {
+            handleError(err, showToast);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["items"] });
+        },
+    });
 
-  const onSubmit: SubmitHandler<ItemCreate> = (data) => {
-    mutation.mutate(data)
-  }
+    const onSubmit: SubmitHandler<ItemCreate> = (data) => {
+        mutation.mutate(data);
+    };
 
-  return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add Item</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!errors.title}>
-              <FormLabel htmlFor="title">Title</FormLabel>
-              <Input
-                id="title"
-                {...register("title", {
-                  required: "Title is required.",
-                })}
-                placeholder="Title"
-                type="text"
-              />
-              {errors.title && (
-                <FormErrorMessage>{errors.title.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="description">Description</FormLabel>
-              <Input
-                id="description"
-                {...register("description")}
-                placeholder="Description"
-                type="text"
-              />
-            </FormControl>
-          </ModalBody>
+    return (
+        <>
+            {isOpen && (
+                <Modal onClose={onClose}>
+                    <div className="mx-auto w-full p-8">
+                        <div>
+                            <h2 className="text-lg font-semibold leading-6 text-default-800">Add Item</h2>
+                            <form className="w-full mt-2" onSubmit={handleSubmit(onSubmit)}>
+                                <FormControl>
+                                    <Label htmlFor="title">Title</Label>
+                                    <Input
+                                        id="title"
+                                        {...register("title", {
+                                            required: "Title is required.",
+                                        })}
+                                        placeholder="Title"
+                                        type="text"
+                                        error={errors.title?.message}
+                                    />
+                                </FormControl>
+                                <FormControl className="mt-1">
+                                    <Label htmlFor="description">Description</Label>
+                                    <Input
+                                        id="description"
+                                        {...register("description")}
+                                        placeholder="Description"
+                                        type="text"
+                                        error={errors.description?.message}
+                                    />
+                                </FormControl>
+                                <div className="flex justify-end gap-2 mt-8">
+                                    <Button className="min-w-32" onClick={onClose} disabled={mutation.isPending}>
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        className="min-w-32"
+                                        color="primary"
+                                        type="submit"
+                                        disabled={!isEmpty(errors) || mutation.isPending}
+                                        isLoading={mutation.isPending}
+                                    >
+                                        Confirm
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </Modal>
+            )}
+        </>
+    );
+};
 
-          <ModalFooter gap={3}>
-            <Button variant="primary" type="submit" isLoading={isSubmitting}>
-              Save
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  )
-}
-
-export default AddItem
+export default AddItem;

@@ -1,25 +1,22 @@
-import { Box, Container, Text } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router";
 
-import useAuth from "../../hooks/useAuth"
+import useAuth from "../../hooks/useAuth";
 
 export const Route = createFileRoute("/_layout/")({
-  component: Dashboard,
-})
+    component: Dashboard,
+});
 
 function Dashboard() {
-  const { user: currentUser } = useAuth()
+    const { user: currentUser } = useAuth();
 
-  return (
-    <>
-      <Container maxW="full">
-        <Box pt={12} m={4}>
-          <Text fontSize="2xl">
-            Hi, {currentUser?.first_name || currentUser?.email} 👋🏼
-          </Text>
-          <Text>Welcome back, nice to see you again!</Text>
-        </Box>
-      </Container>
-    </>
-  )
+    return (
+        <>
+            <div className="max-w-full">
+                <div className="pt-4 m-1">
+                    <p className="text-2xl">Hi, {currentUser?.first_name || currentUser?.email} 👋🏼</p>
+                    <p>Welcome back, nice to see you again!</p>
+                </div>
+            </div>
+        </>
+    );
 }

@@ -1,182 +1,147 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
-import {
-  type ApiError,
-  type UserPublic,
-  type UserUpdateMe,
-  UsersService,
-} from "../../client"
-import useAuth from "../../hooks/useAuth"
-import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern, handleError } from "../../utils"
+import { type ApiError, type UserPublic, type UserUpdateMe, UsersService } from "../../client";
+import useAuth from "../../hooks/useAuth";
+import useCustomToast from "../../hooks/useCustomToast";
+import { cn, emailPattern, handleError, isEmpty } from "../../utils";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input2";
+import { Button } from "@/components/ui/button";
 
 const UserInformation = () => {
-  const queryClient = useQueryClient()
-  const color = useColorModeValue("inherit", "ui.light")
-  const showToast = useCustomToast()
-  const [editMode, setEditMode] = useState(false)
-  const { user: currentUser } = useAuth()
-  const {
-    register,
-    handleSubmit,
-    reset,
-    getValues,
-    formState: { isSubmitting, errors, isDirty },
-  } = useForm<UserPublic>({
-    mode: "onBlur",
-    criteriaMode: "all",
-    defaultValues: {
-      first_name: currentUser?.first_name,
-      last_name: currentUser?.last_name,
-      email: currentUser?.email,
-    },
-  })
+    const queryClient = useQueryClient();
+    const showToast = useCustomToast();
+    const [editMode, setEditMode] = useState(false);
+    const { user: currentUser } = useAuth();
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode)
-  }
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<UserPublic>({
+        // mode: "onBlur",
+        criteriaMode: "all",
+        defaultValues: {
+            first_name: currentUser?.first_name,
+            last_name: currentUser?.last_name,
+            email: currentUser?.email,
+        },
+    });
 
-  const mutation = useMutation({
-    mutationFn: (data: UserUpdateMe) =>
-      UsersService.updateUserMe({ requestBody: data }),
-    onSuccess: () => {
-      showToast("Success!", "User updated successfully.", "success")
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries()
-    },
-  })
+    const toggleEditMode = () => {
+        setEditMode(!editMode);
+    };
 
-  const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
-    mutation.mutate(data)
-  }
+    const mutation = useMutation({
+        mutationFn: (data: UserUpdateMe) => UsersService.updateUserMe({ requestBody: data }),
+        onSuccess: () => {
+            showToast.success("Success!", "User updated successfully.");
+        },
+        onError: (err: ApiError) => {
+            handleError(err, showToast);
+        },
+        onSettled: () => {
+            toggleEditMode();
+            queryClient.invalidateQueries();
+        },
+    });
 
-  const onCancel = () => {
-    reset()
-    toggleEditMode()
-  }
+    const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
+        mutation.mutate(data);
+    };
 
-  return (
-    <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          User Information
-        </Heading>
-        <Box
-          w={{ sm: "full", md: "50%" }}
-          as="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <FormControl>
-            <FormLabel color={color} htmlFor="name">
-              First name
-            </FormLabel>
-            {editMode ? (
-              <Input
-                id="name"
-                {...register("first_name", { maxLength: 30 })}
-                type="text"
-                size="md"
-                w="auto"
-              />
-            ) : (
-              <Text
-                size="md"
-                py={2}
-                color={!currentUser?.first_name ? "ui.dim" : "inherit"}
-                isTruncated
-                maxWidth="250px"
-              >
-                {currentUser?.first_name || "N/A"}
-              </Text>
-            )}
-          </FormControl>
-          <FormControl>
-            <FormLabel color={color} htmlFor="name">
-              Last name
-            </FormLabel>
-            {editMode ? (
-              <Input
-                id="name"
-                {...register("last_name", { maxLength: 30 })}
-                type="text"
-                size="md"
-                w="auto"
-              />
-            ) : (
-              <Text
-                size="md"
-                py={2}
-                color={!currentUser?.last_name ? "ui.dim" : "inherit"}
-                isTruncated
-                maxWidth="250px"
-              >
-                {currentUser?.last_name || "N/A"}
-              </Text>
-            )}
-          </FormControl>
-          <FormControl mt={4} isInvalid={!!errors.email}>
-            <FormLabel color={color} htmlFor="email">
-              Email
-            </FormLabel>
-            {editMode ? (
-              <Input
-                id="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: emailPattern,
-                })}
-                type="email"
-                size="md"
-                w="auto"
-              />
-            ) : (
-              <Text size="md" py={2} isTruncated maxWidth="250px">
-                {currentUser?.email}
-              </Text>
-            )}
-            {errors.email && (
-              <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <Flex mt={4} gap={3}>
-            <Button
-              variant="primary"
-              onClick={toggleEditMode}
-              type={editMode ? "button" : "submit"}
-              isLoading={editMode ? isSubmitting : false}
-              isDisabled={editMode ? !isDirty || !getValues("email") : false}
-            >
-              {editMode ? "Save" : "Edit"}
-            </Button>
-            {editMode && (
-              <Button onClick={onCancel} isDisabled={isSubmitting}>
-                Cancel
-              </Button>
-            )}
-          </Flex>
-        </Box>
-      </Container>
-    </>
-  )
-}
+    const handleEdit = () => {
+        // Programmatically submit the form
+        handleSubmit(onSubmit)();
+    };
 
-export default UserInformation
+    const onCancel = () => {
+        reset();
+        toggleEditMode();
+    };
+
+    return (
+        <div>
+            <h2 className="py-1 font-semibold">User Information</h2>
+            <form>
+                <div>
+                    <Label htmlFor="first_name">First name</Label>
+                    {editMode ? (
+                        <Input
+                            {...register("first_name", {
+                                required: "First name is required",
+                                maxLength: {
+                                    value: 30,
+                                    message: "This input must not exceed 30 characters",
+                                },
+                            })}
+                            error={errors.first_name?.message}
+                        />
+                    ) : (
+                        <p className="py-0.5 text-opacity-50 max-w-60 truncate">{currentUser?.first_name || "N/A"}</p>
+                    )}
+                </div>
+                <div className="mt-2">
+                    <Label htmlFor="last_name">Last name</Label>
+                    {editMode ? (
+                        <Input
+                            {...register("last_name", {
+                                required: "Last name is required",
+                                maxLength: {
+                                    value: 30,
+                                    message: "This input must not exceed 10 characters",
+                                },
+                            })}
+                            error={errors.last_name?.message}
+                        />
+                    ) : (
+                        <p className={cn("py-0.5 max-w-60 truncate", !currentUser?.last_name && "text-opacity-50")}>
+                            {currentUser?.last_name || "N/A"}
+                        </p>
+                    )}
+                </div>
+                <div className="mt-2">
+                    <Label htmlFor="email">Email</Label>
+                    {editMode ? (
+                        <Input
+                            {...register("email", {
+                                required: "Email is required",
+                                pattern: emailPattern,
+                            })}
+                            error={errors.email?.message}
+                        />
+                    ) : (
+                        <p className="py-0.5 max-w-60 truncate">{currentUser?.email}</p>
+                    )}
+                </div>
+                <div className="flex mt-4 gap-2">
+                    {editMode ? (
+                        <>
+                            <Button
+                                onClick={handleEdit}
+                                color="primary"
+                                type="button"
+                                isLoading={mutation.isPending}
+                                disabled={!isEmpty(errors) || mutation.isPending}
+                            >
+                                Save
+                            </Button>
+                            <Button color="danger" onClick={onCancel} disabled={mutation.isPending}>
+                                Cancel
+                            </Button>
+                        </>
+                    ) : (
+                        <Button color="primary" onClick={toggleEditMode}>
+                            Edit
+                        </Button>
+                    )}
+                </div>
+            </form>
+        </div>
+    );
+};
+
+export default UserInformation;

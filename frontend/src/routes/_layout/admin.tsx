@@ -1,14 +1,17 @@
-import { Badge, Box, Container, Flex, Heading, SkeletonText, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { z } from "zod";
 
 import { type UserPublic, UsersService } from "../../client";
-import AddUser from "../../components/Admin/AddUser";
-import ActionsMenu from "../../components/Common/ActionsMenu";
-import Navbar from "../../components/Common/Navbar";
-import { PaginationFooter } from "../../components/Common/PaginationFooter.tsx";
+import AddUser from "@/components/Admin/AddUser";
+import ActionsMenu from "@/components/Common/ActionsMenu";
+import Navbar from "@/components/Common/Navbar";
+import { Pagination } from "@/components/ui/pagination.tsx";
+import { Table, THead, TR, TH, TD, TBody } from "@/components/ui/table.tsx";
+import SkeletonText from "@/components/ui/skeleton-text.tsx";
+import { Chip } from "@/components/ui/chip";
+import { cn } from "@/utils";
 
 const usersSearchSchema = z.object({
     page: z.number().catch(1),
@@ -58,80 +61,75 @@ function UsersTable() {
 
     return (
         <>
-            <TableContainer>
-                <Table size={{ base: "sm", md: "md" }}>
-                    <Thead>
-                        <Tr>
-                            <Th width="20%">Full name</Th>
-                            <Th width="50%">Email</Th>
-                            <Th width="10%">Role</Th>
-                            <Th width="10%">Status</Th>
-                            <Th width="10%">Actions</Th>
-                        </Tr>
-                    </Thead>
+            <div>
+                <Table>
+                    <THead>
+                        <TR>
+                            <TH className="w-[10%]">First name</TH>
+                            <TH className="w-[10%]">Last name</TH>
+                            <TH className="w-1/2">Email</TH>
+                            <TH className="w-[10%]">Role</TH>
+                            <TH className="w-[10%]">Status</TH>
+                            <TH className="w-[10%]">Actions</TH>
+                        </TR>
+                    </THead>
                     {isPending ? (
-                        <Tbody>
-                            <Tr>
+                        <TBody>
+                            <TR>
                                 {new Array(5).fill(null).map((_, index) => (
-                                    <Td key={index}>
+                                    <TD key={index}>
                                         <SkeletonText noOfLines={1} paddingBlock="16px" />
-                                    </Td>
+                                    </TD>
                                 ))}
-                            </Tr>
-                        </Tbody>
+                            </TR>
+                        </TBody>
                     ) : (
-                        <Tbody>
+                        <TBody>
                             {users?.data.map((user) => (
-                                <Tr key={user.id}>
-                                    <Td color={!user.first_name ? "ui.dim" : "inherit"} isTruncated maxWidth="150px">
+                                <TR key={user.id}>
+                                    <TD className={cn("max-w-40 truncate", !user.first_name ? "opacity-50" : "opacity-100")}>
                                         {user.first_name || "N/A"}
-                                        {currentUser?.id === user.id && (
-                                            <Badge ml="1" colorScheme="teal">
-                                                You
-                                            </Badge>
-                                        )}
-                                    </Td>
-                                    <Td color={!user.last_name ? "ui.dim" : "inherit"} isTruncated maxWidth="150px">
+                                        {currentUser?.id === user.id && <Chip title="You" className="ml-1" color="secondary" />}
+                                    </TD>
+                                    <TD className={cn("max-w-40 truncate", !user.last_name ? "opacity-50" : "opacity-100")}>
                                         {user.last_name || "N/A"}
-                                        {currentUser?.id === user.id && (
-                                            <Badge ml="1" colorScheme="teal">
-                                                You
-                                            </Badge>
-                                        )}
-                                    </Td>
-                                    <Td isTruncated maxWidth="150px">
-                                        {user.email}
-                                    </Td>
-                                    <Td>{user.is_superuser ? "Superuser" : "User"}</Td>
-                                    <Td>
-                                        <Flex gap={2}>
-                                            <Box w="2" h="2" borderRadius="50%" bg={user.is_active ? "ui.success" : "ui.danger"} alignSelf="center" />
+                                        {currentUser?.id === user.id && <Chip title="You" className="ml-1" />}
+                                    </TD>
+                                    <TD className="max-w-40 truncate">{user.email}</TD>
+                                    <TD>{user.is_superuser ? "Superuser" : "User"}</TD>
+                                    <TD>
+                                        <div className="flex gap-2">
+                                            <div className={cn("w-1 h-1 rounded-50 self-center", user.is_active ? "bg-success" : "bg-danger")} />
                                             {user.is_active ? "Active" : "Inactive"}
-                                        </Flex>
-                                    </Td>
-                                    <Td>
+                                        </div>
+                                    </TD>
+                                    <TD>
                                         <ActionsMenu type="User" value={user} disabled={currentUser?.id === user.id} />
-                                    </Td>
-                                </Tr>
+                                    </TD>
+                                </TR>
                             ))}
-                        </Tbody>
+                        </TBody>
                     )}
                 </Table>
-            </TableContainer>
-            <PaginationFooter onChangePage={setPage} page={page} hasNextPage={hasNextPage} hasPreviousPage={hasPreviousPage} />
+            </div>
+            <Pagination
+                page={page}
+                onChangePage={setPage}
+                hasNextPage={hasNextPage}
+                hasPreviousPage={hasPreviousPage}
+                count={Math.ceil((users?.count as number) / PER_PAGE)}
+            />
         </>
     );
 }
 
 function Admin() {
     return (
-        <Container maxW="full">
-            <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-                Users Management
-            </Heading>
+        <div className="w-full px-2 py-4">
+            <h2 className="text-xl text-center md:text-left pt-4">Users Management</h2>
 
             <Navbar type={"User"} addModalAs={AddUser} />
             <UsersTable />
-        </Container>
+        </div>
     );
 }

@@ -1,23 +1,48 @@
-import { useToast } from "@chakra-ui/react"
-import { useCallback } from "react"
+import { useCallback } from "react";
+import { useSnackbar } from "notistack";
 
-const useCustomToast = () => {
-  const toast = useToast()
-
-  const showToast = useCallback(
-    (title: string, description: string, status: "success" | "error") => {
-      toast({
-        title,
-        description,
-        status,
-        isClosable: true,
-        position: "bottom-right",
-      })
-    },
-    [toast],
-  )
-
-  return showToast
+declare module "notistack" {
+    interface VariantOverrides {
+        toast: {
+            description?: string;
+            status?: string;
+        };
+    }
 }
 
-export default useCustomToast
+export interface ToastMethods {
+    success: (title: string, description?: string) => void;
+    error: (title: string, description?: string) => void;
+    info: (title: string, description?: string) => void;
+    warning: (title: string, description?: string) => void;
+}
+
+const useCustomToast = (): ToastMethods => {
+    const { enqueueSnackbar } = useSnackbar();
+
+    const createToast = useCallback(
+        (variant: "success" | "error" | "toast", status: "success" | "error" | "warning" | "info") =>
+            (title: string, description: string = "") => {
+                enqueueSnackbar(title, {
+                    variant,
+                    anchorOrigin: {
+                        vertical: "top",
+                        horizontal: "right",
+                    },
+                    autoHideDuration: 3000,
+                    description,
+                    status,
+                });
+            },
+        [enqueueSnackbar]
+    );
+
+    return {
+        success: createToast("toast", "success"),
+        error: createToast("toast", "error"),
+        info: createToast("toast", "info"),
+        warning: createToast("toast", "warning"),
+    };
+};
+
+export default useCustomToast;

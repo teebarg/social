@@ -1,59 +1,42 @@
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
-import { FaUserAstronaut } from "react-icons/fa"
-import { FiLogOut, FiUser } from "react-icons/fi"
-
-import useAuth from "../../hooks/useAuth"
+import { Link } from "@tanstack/react-router";
+import Dropdown from "@/components/ui/dropdown";
+import useAuth from "@/hooks/useAuth";
+import { User, UserCircleMini } from "nui-react-icons";
 
 const UserMenu = () => {
-  const { logout } = useAuth()
+    const { logout } = useAuth();
 
-  const handleLogout = async () => {
-    logout()
-  }
+    const handleLogout = async () => {
+        logout();
+    };
 
-  return (
-    <>
-      {/* Desktop */}
-      <Box
-        display={{ base: "none", md: "block" }}
-        position="fixed"
-        top={4}
-        right={4}
-      >
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<FaUserAstronaut color="white" fontSize="18px" />}
-            bg="ui.main"
-            isRound
-            data-testid="user-menu"
-          />
-          <MenuList>
-            <MenuItem icon={<FiUser fontSize="18px" />} as={Link} to="settings">
-              My profile
-            </MenuItem>
-            <MenuItem
-              icon={<FiLogOut fontSize="18px" />}
-              onClick={handleLogout}
-              color="ui.danger"
-              fontWeight="bold"
-            >
-              Log out
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Box>
-    </>
-  )
-}
+    return (
+        <>
+            {/* Desktop */}
+            <div className="fixed hidden md:block top-4 right-4">
+                <Dropdown align="end" trigger={<UserCircleMini viewBox="0 0 24 24" className="h-12 w-12" />}>
+                    <div>
+                        <div className="bg-default-100 rounded-lg shadow-md p-3 min-w-[100px] text-sm font-medium">
+                            <div className="mb-2">
+                                <Link className="flex w-full items-center" to="settings">
+                                    <span className="mr-2">
+                                        <User />
+                                    </span>
+                                    <span>My profile</span>
+                                </Link>
+                            </div>
+                            <button className="flex w-full items-center text-rose-500 font-semibold" onClick={handleLogout}>
+                                <span className="mr-2">
+                                    <User />
+                                </span>
+                                <span>Log out</span>
+                            </button>
+                        </div>
+                    </div>
+                </Dropdown>
+            </div>
+        </>
+    );
+};
 
-export default UserMenu
+export default UserMenu;

@@ -1,35 +1,27 @@
-import {
-  Button,
-  Container,
-  Heading,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { useOverlayTriggerState } from "react-stately";
 
-import DeleteConfirmation from "./DeleteConfirmation"
+import DeleteConfirmation from "./DeleteConfirmation";
+import { Button } from "../ui/button";
+import { Modal } from "../modal";
 
 const DeleteAccount = () => {
-  const confirmationModal = useDisclosure()
+    const confirmationModal = useOverlayTriggerState({});
 
-  return (
-    <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          Delete Account
-        </Heading>
-        <Text>
-          Permanently delete your data and everything associated with your
-          account.
-        </Text>
-        <Button variant="danger" mt={4} onClick={confirmationModal.onOpen}>
-          Delete
-        </Button>
-        <DeleteConfirmation
-          isOpen={confirmationModal.isOpen}
-          onClose={confirmationModal.onClose}
-        />
-      </Container>
-    </>
-  )
-}
-export default DeleteAccount
+    return (
+        <>
+            <div>
+                <h2 className="text-lg py-1">Delete Account</h2>
+                <p>Permanently delete your data and everything associated with your account.</p>
+                <Button className="mt-2" color="danger" onClick={confirmationModal.open}>
+                    Delete
+                </Button>
+                {confirmationModal.isOpen && (
+                    <Modal onClose={confirmationModal.close}>
+                        <DeleteConfirmation onClose={confirmationModal.close} />
+                    </Modal>
+                )}
+            </div>
+        </>
+    );
+};
+export default DeleteAccount;

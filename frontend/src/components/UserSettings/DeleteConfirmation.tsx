@@ -1,96 +1,78 @@
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import React from "react"
-import { useForm } from "react-hook-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
 
-import { type ApiError, UsersService } from "../../client"
-import useAuth from "../../hooks/useAuth"
-import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { type ApiError, UsersService } from "../../client";
+import useAuth from "../../hooks/useAuth";
+import useCustomToast from "../../hooks/useCustomToast";
+import { handleError } from "../../utils";
+import { Button } from "../ui/button";
 
 interface DeleteProps {
-  isOpen: boolean
-  onClose: () => void
+    onClose: () => void;
 }
 
-const DeleteConfirmation = ({ isOpen, onClose }: DeleteProps) => {
-  const queryClient = useQueryClient()
-  const showToast = useCustomToast()
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null)
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm()
-  const { logout } = useAuth()
+const DeleteConfirmation = ({ onClose }: DeleteProps) => {
+    const queryClient = useQueryClient();
+    const showToast = useCustomToast();
+    const { logout } = useAuth();
 
-  const mutation = useMutation({
-    mutationFn: () => UsersService.deleteUserMe(),
-    onSuccess: () => {
-      showToast(
-        "Success",
-        "Your account has been successfully deleted.",
-        "success",
-      )
-      logout()
-      onClose()
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] })
-    },
-  })
+    const mutation = useMutation({
+        mutationFn: () => UsersService.deleteUserMe(),
+        onSuccess: () => {
+            showToast.success("Success", "Your account has been successfully deleted.");
+            logout();
+            onClose();
+        },
+        onError: (err: ApiError) => {
+            handleError(err, showToast);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        },
+    });
 
-  const onSubmit = async () => {
-    mutation.mutate()
-  }
+    const onSubmit = async () => {
+        mutation.mutate();
+    };
 
-  return (
-    <>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        leastDestructiveRef={cancelRef}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Confirmation Required</AlertDialogHeader>
+    return (
+        <>
+            <div className="mx-auto w-full p-8">
+                <div>
+                    <div className="pb-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
+                        <div className="flex">
+                            <div className="flex items-center">
+                                <div className="flex grow flex-col gap-1">
+                                    <h2 className="text-lg font-semibold leading-6 text-default-800">Confirmation Required</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-sm text-default-500 mt-6">
+                            All your account data will be <strong>permanently deleted.</strong> If you are sure, please click{" "}
+                            <strong>"Confirm"</strong> to proceed. This action cannot be undone.
+                        </p>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-8">
+                        <Button className="min-w-32" color="default" variant="shadow" onClick={onClose} disabled={mutation.isPending}>
+                            Cancel
+                        </Button>
+                        <Button
+                            className="min-w-32"
+                            color="danger"
+                            variant="shadow"
+                            onClick={onSubmit}
+                            disabled={mutation.isPending}
+                            isLoading={mutation.isPending}
+                        >
+                            Confirm
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
 
-            <AlertDialogBody>
-              All your account data will be{" "}
-              <strong>permanently deleted.</strong> If you are sure, please
-              click <strong>"Confirm"</strong> to proceed. This action cannot be
-              undone.
-            </AlertDialogBody>
-
-            <AlertDialogFooter gap={3}>
-              <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Confirm
-              </Button>
-              <Button
-                ref={cancelRef}
-                onClick={onClose}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
-  )
-}
-
-export default DeleteConfirmation
+export default DeleteConfirmation;
