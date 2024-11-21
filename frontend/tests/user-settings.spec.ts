@@ -258,7 +258,7 @@ test("User can switch from light mode to dark mode", async ({ page }) => {
   await page.getByRole("tab", { name: "Appearance" }).click()
   await page.getByLabel("Appearance").locator("span").nth(3).click()
   const isDarkMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-dark"),
+    document.body.classList.contains("dark"),
   )
   expect(isDarkMode).toBe(true)
 })
@@ -268,7 +268,7 @@ test("User can switch from dark mode to light mode", async ({ page }) => {
   await page.getByRole("tab", { name: "Appearance" }).click()
   await page.getByLabel("Appearance").locator("span").first().click()
   const isLightMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-light"),
+    document.body.classList.contains("light"),
   )
   expect(isLightMode).toBe(true)
 })
@@ -282,7 +282,7 @@ test("Selected mode is preserved across sessions", async ({ page }) => {
 
   await logInUser(page, firstSuperuser, firstSuperuserPassword)
   const isDarkMode = await page.evaluate(() =>
-    document.body.classList.contains("chakra-ui-dark"),
+    document.body.classList.contains("dark"),
   )
   expect(isDarkMode).toBe(true)
 })

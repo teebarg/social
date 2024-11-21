@@ -1,8 +1,8 @@
 import uuid
+from datetime import datetime
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime
 
 
 # Shared properties
@@ -120,12 +120,13 @@ class NewPassword(SQLModel):
 
 
 class TweetBase(SQLModel):
-    content: str  = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1, max_length=255)
 
 
 # Properties to receive on item creation
 class TweetCreate(TweetBase):
     pass
+
 
 # Database model, database table inferred from class name
 class Tweet(TweetBase, table=True):
@@ -186,4 +187,3 @@ class DraftPublic(DraftBase):
 class DraftsPublic(SQLModel):
     data: list[DraftPublic]
     count: int
-    

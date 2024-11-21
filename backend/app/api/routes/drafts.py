@@ -5,24 +5,31 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
 from app.api.deps import CurrentUser, SessionDep
-from app.models import Draft, DraftCreate, DraftPublic, DraftsPublic, DraftUpdate, Message
+from app.models import (
+    Draft,
+    DraftCreate,
+    DraftPublic,
+    DraftsPublic,
+    DraftUpdate,
+    Message,
+)
 
 router = APIRouter()
 
 
 @router.get("/", response_model=DraftsPublic)
-def read_items(
+def index(
     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
 ) -> Any:
     """
-    Retrieve items.
+    Retrieve drafts.
     """
 
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Draft)
         count = session.exec(count_statement).one()
         statement = select(Draft).offset(skip).limit(limit)
-        items = session.exec(statement).all()
+        drafts = session.exec(statement).all()
     else:
         count_statement = (
             select(func.count())
@@ -36,40 +43,40 @@ def read_items(
             .offset(skip)
             .limit(limit)
         )
-        items = session.exec(statement).all()
+        drafts = session.exec(statement).all()
 
-    return DraftsPublic(data=items, count=count)
+    return DraftsPublic(data=drafts, count=count)
 
 
 @router.get("/{id}", response_model=DraftPublic)
-def read_item(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
+def show(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
     """
-    Get item by ID.
+    Get draft by ID.
     """
-    item = session.get(Draft, id)
-    if not item:
+    draft = session.get(Draft, id)
+    if not draft:
         raise HTTPException(status_code=404, detail="Draft not found")
-    if not current_user.is_superuser and (item.user_id != current_user.id):
+    if not current_user.is_superuser and (draft.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    return item
+    return draft
 
 
 @router.post("/", response_model=DraftPublic)
-def create_item(
+def create(
     *, session: SessionDep, current_user: CurrentUser, item_in: DraftCreate
 ) -> Any:
     """
-    Create new item.
+    Create new draft.
     """
-    item = Draft.model_validate(item_in, update={"user_id": current_user.id})
-    session.add(item)
+    draft = Draft.model_validate(item_in, update={"user_id": current_user.id})
+    session.add(draft)
     session.commit()
-    session.refresh(item)
-    return item
+    session.refresh(draft)
+    return draft
 
 
 @router.put("/{id}", response_model=DraftPublic)
-def update_item(
+def update(
     *,
     session: SessionDep,
     current_user: CurrentUser,
@@ -77,33 +84,31 @@ def update_item(
     item_in: DraftUpdate,
 ) -> Any:
     """
-    Update an item.
+    Update an draft.
     """
-    item = session.get(Draft, id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.user_id != current_user.id):
+    draft = session.get(Draft, id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    if not current_user.is_superuser and (draft.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     update_dict = item_in.model_dump(exclude_unset=True)
-    item.sqlmodel_update(update_dict)
-    session.add(item)
+    draft.sqlmodel_update(update_dict)
+    session.add(draft)
     session.commit()
-    session.refresh(item)
-    return item
+    session.refresh(draft)
+    return draft
 
 
 @router.delete("/{id}")
-def delete_item(
-    session: SessionDep, current_user: CurrentUser, id: uuid.UUID
-) -> Message:
+def delete(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Message:
     """
-    Delete an item.
+    Delete an draft.
     """
-    item = session.get(Item, id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not current_user.is_superuser and (item.user_id != current_user.id):
+    draft = session.get(Draft, id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    if not current_user.is_superuser and (draft.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    session.delete(item)
+    session.delete(draft)
     session.commit()
-    return Message(message="Item deleted successfully")
+    return Message(message="Draft deleted successfully")

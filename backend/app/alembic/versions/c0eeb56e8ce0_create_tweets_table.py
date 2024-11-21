@@ -5,6 +5,7 @@ Revises: 1a31ce608336
 Create Date: 2024-11-15 13:33:15.643332
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel.sql.sqltypes
@@ -14,8 +15,8 @@ from datetime import datetime
 
 
 # revision identifiers, used by Alembic.
-revision = 'c0eeb56e8ce0'
-down_revision = '1a31ce608336'
+revision = "c0eeb56e8ce0"
+down_revision = "1a31ce608336"
 branch_labels = None
 depends_on = None
 
@@ -31,7 +32,9 @@ def upgrade():
             postgresql.UUID(as_uuid=True),
             default=sa.text("uuid_generate_v4()"),
         ),
-        sa.Column("content", sqlmodel.sql.sqltypes.AutoString(), nullable=False, unique=True),
+        sa.Column(
+            "content", sqlmodel.sql.sqltypes.AutoString(), nullable=False, unique=True
+        ),
         sa.Column("twitter_id", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False, default=datetime.utcnow),
         sa.PrimaryKeyConstraint("id"),

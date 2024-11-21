@@ -1,20 +1,20 @@
-import { debounce } from "@/utils";
-import { useCallback } from "react";
+import { debounce } from "@/utils"
+import { useCallback } from "react"
 
 interface QueryParam {
-    key: string;
-    value: string;
+  key: string
+  value: string
 }
 
 const useUpdateQuery = (delay = 500) => {
-    const updateQuery = useCallback(
-        debounce((data: QueryParam[]) => {
-            console.log(data);
-        }, delay),
-        []
-    );
+  const updateQuery = useCallback(
+    debounce((data: QueryParam[]) => {
+      console.log(data)
+    }, delay),
+    [],
+  )
 
-    return { updateQuery };
-};
+  return { updateQuery }
+}
 
-export { useUpdateQuery };
+export { useUpdateQuery }

@@ -1,14 +1,14 @@
-from app.models import Tweet
+import time
+
+import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import requests
-from requests_oauthlib import OAuth1
-from app.core.config import settings
 from requests.exceptions import RequestException
-from app.api.deps import (
-    SessionDep
-)
-import time
+from requests_oauthlib import OAuth1
+
+from app.api.deps import SessionDep
+from app.core.config import settings
+from app.models import Tweet
 
 router = APIRouter()
 
@@ -18,9 +18,11 @@ TWITTER_API_URL = "https://api.twitter.com/2/tweets"
 MAX_RETRIES = 3
 BACKOFF_FACTOR = 2  # Exponential backoff factor
 
+
 # Pydantic model for the tweet content
 class TweetRequest(BaseModel):
     content: str
+
 
 @router.post("/")
 async def post_tweet(db: SessionDep, tweet: TweetRequest):
@@ -36,7 +38,10 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
     """
     # Validate content length
     if len(tweet.content) > 280:
-        return {"success": False, "error": "Content exceeds the maximum length of 280 characters"}
+        return {
+            "success": False,
+            "error": "Content exceeds the maximum length of 280 characters",
+        }
 
     # Set up OAuth1 authentication for Twitter
     auth = OAuth1(
@@ -47,9 +52,7 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
     )
 
     # # Create the payload for the tweet
-    payload = {
-        "text": tweet.content
-    }
+    payload = {"text": tweet.content}
 
     retries = 0
     while retries < MAX_RETRIES:
@@ -62,28 +65,34 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
                 twitter_response = response.json()
                 new_tweet = Tweet(
                     content=tweet.content,
-                    twitter_id=twitter_response.get('data', {}).get("id")
+                    twitter_id=twitter_response.get("data", {}).get("id"),
                 )
                 db.add(new_tweet)
                 db.commit()
-                return {"message": "Tweet posted successfully", "tweet": twitter_response}
+                return {
+                    "message": "Tweet posted successfully",
+                    "tweet": twitter_response,
+                }
 
             elif response.status_code == 429:
                 # Rate limit hit: Exponential backoff
-                wait_time = BACKOFF_FACTOR ** retries
+                wait_time = BACKOFF_FACTOR**retries
                 time.sleep(wait_time)
                 retries += 1
                 continue
 
             else:
                 # Other errors
-                raise HTTPException(status_code=response.status_code, detail=response.json())
+                raise HTTPException(
+                    status_code=response.status_code, detail=response.json()
+                )
 
         except RequestException as e:
             retries += 1
-            time.sleep(BACKOFF_FACTOR ** retries)
+            time.sleep(BACKOFF_FACTOR**retries)
             if retries == MAX_RETRIES:
                 raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 # @router.get("/link-preview")
 # def get_link_preview(url: str):

@@ -5,14 +5,15 @@ Revises: c0eeb56e8ce0
 Create Date: 2024-11-15 16:17:20.198895
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision = 'bd8358be9509'
-down_revision = 'c0eeb56e8ce0'
+revision = "bd8358be9509"
+down_revision = "c0eeb56e8ce0"
 branch_labels = None
 depends_on = None
 
