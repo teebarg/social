@@ -2,7 +2,6 @@ import { Icon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import Logo from "/assets/images/fastapi-logo.svg";
 import type { Body_login_login_access_token as AccessToken } from "../client";
 import useAuth, { isLoggedIn } from "../hooks/useAuth";
 import { emailPattern } from "../utils";
@@ -52,55 +51,61 @@ function Login() {
 
     return (
         <>
-            <div className="flex h-screen">
-                <form className="max-w-2xl space-y-4 m-auto shadow-xl p-8 rounded-lg bg-content1" onSubmit={handleSubmit(onSubmit)}>
-                    <img className="max-w-20 m-auto mb-4 h-auto" src={Logo} alt="FastAPI logo" />
-                    <FormControl id="username">
-                        <Input
-                            id="username"
-                            {...register("username", {
-                                required: "Username is required",
-                                pattern: emailPattern,
-                            })}
-                            placeholder="Email"
-                            type="email"
-                            required
-                            error={errors.username?.message}
-                        />
-                    </FormControl>
-                    <FormControl id="password">
-                        <Input
-                            {...register("password", {
-                                required: "Password is required",
-                            })}
-                            type={show ? "text" : "password"}
-                            placeholder="Password"
-                            required
-                            endContent={
-                                <Icon
-                                    as={show ? ViewOffIcon : ViewIcon}
-                                    onClick={() => setShow(!show)}
-                                    aria-label={show ? "Hide password" : "Show password"}
-                                >
-                                    {show ? <ViewOffIcon /> : <ViewIcon />}
-                                </Icon>
-                            }
-                            error={error}
-                        />
-                    </FormControl>
-                    <Link to="/recover-password" className="text-blue-500 text-xs">
-                        Forgot password?
-                    </Link>
-                    <Button className="block w-full" color="primary" type="submit" isLoading={isSubmitting}>
-                        Log In
-                    </Button>
-                    <p>
+            <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 min-h-screen text-center">
+                <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
+                    <h2 className="text-3xl font-semibold text-gray-800 mb-4">Login</h2>
+
+                    <p className="text-gray-600 mb-6">login to start your data journey.</p>
+
+                    <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                        <FormControl id="username">
+                            <Input
+                                id="username"
+                                {...register("username", {
+                                    required: "Username is required",
+                                    pattern: emailPattern,
+                                })}
+                                placeholder="Email"
+                                type="email"
+                                required
+                                error={errors.username?.message}
+                            />
+                        </FormControl>
+
+                        <FormControl id="password">
+                            <Input
+                                {...register("password", {
+                                    required: "Password is required",
+                                })}
+                                type={show ? "text" : "password"}
+                                placeholder="Password"
+                                required
+                                endContent={
+                                    <Icon
+                                        as={show ? ViewOffIcon : ViewIcon}
+                                        onClick={() => setShow(!show)}
+                                        aria-label={show ? "Hide password" : "Show password"}
+                                    >
+                                        {show ? <ViewOffIcon /> : <ViewIcon />}
+                                    </Icon>
+                                }
+                                error={error}
+                            />
+                        </FormControl>
+                        <Link to="/recover-password" className="text-blue-500 text-xs">
+                            Forgot password?
+                        </Link>
+                        <Button className="block w-full" color="primary" type="submit" isLoading={isSubmitting}>
+                            Log In
+                        </Button>
+                    </form>
+                    <p className="mt-6 text-xs text-gray-500">
                         Don't have an account?{" "}
                         <Link to="/signup" className="text-blue-500">
                             Sign up
                         </Link>
                     </p>
-                </form>
+                </div>
             </div>
         </>
     );
