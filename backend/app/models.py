@@ -154,7 +154,10 @@ class DraftBase(SQLModel):
     image_url: str | None = Field(default=None, max_length=255)
     link_url: str | None = Field(default=None, max_length=255)
     platform: str | None = Field(default=None, max_length=100)
+    scheduled_time: datetime| None = None
     is_published: bool = Field(default=False)
+    created_at: datetime | None = Field(default=datetime.now())
+    updated_at: datetime | None = Field(default=datetime.now())
 
 
 # Properties to receive on Draft creation
@@ -170,6 +173,7 @@ class DraftUpdate(DraftBase):
 
 # Database model, database table inferred from class name
 class Draft(DraftBase, table=True):
+    __tablename__ = "drafts"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     title: str = Field(max_length=255)
     user_id: uuid.UUID = Field(

@@ -1,0 +1,177 @@
+import React, { useState } from "react";
+import { format } from "date-fns";
+import { FacebookIcon, Trash, EditIcon, Send, Calendar } from "nui-react-icons";
+import { DraftPublic, DraftService, DraftsPublic } from "@/client";
+import { Button } from "@/components/ui/button";
+import { Modal } from "../modal";
+import { Confirm } from "@/components/confirm";
+import { useOverlayTriggerState } from "react-stately";
+import { Pagination } from "../ui/pagination";
+import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table.tsx";
+import SkeletonText from "@/components/ui/skeleton-text.tsx";
+
+const PER_PAGE = 5;
+
+const PlatformIcons = {
+    facebook: FacebookIcon,
+    // instagram: Instagram,
+    // twitter: Twitter,
+};
+
+type Props = {
+    posts?: DraftsPublic;
+    publishPost: (id: string) => void;
+    page: number;
+    setPage: (page: number) => void;
+    hasNextPage: boolean;
+    isPending: boolean;
+};
+
+const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNextPage, isPending }) => {
+    const confirmationModal = useOverlayTriggerState({});
+    const [id, setId] = useState<string>("");
+
+    const getPostStatus = (post: any) => {
+        if (post.is_published) return "published";
+        if (post.scheduled_time) return "scheduled";
+        return "draft";
+    };
+
+    const getStatusStyle = (status: string) => {
+        switch (status) {
+            case "published":
+                return "bg-green-100 text-green-700";
+            case "scheduled":
+                return "bg-purple-100 text-purple-700";
+            default:
+                return "bg-orange-100 text-orange-700";
+        }
+    };
+
+    const handleDelete = (id: string) => {
+        setId(id);
+        confirmationModal.open();
+    };
+
+    const hasPreviousPage = page > 1;
+
+    return (
+        <div className="py-6 space-y-6 relative">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Total Posts</h3>
+                    <p className="text-3xl font-bold text-blue-600 mt-2">{posts?.count}</p>
+                </div>
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Published</h3>
+                    <p className="text-3xl font-bold text-green-600 mt-2">{posts?.data.filter((post: DraftPublic) => post.is_published).length}</p>
+                </div>
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Drafts & Scheduled</h3>
+                    <p className="text-3xl font-bold text-orange-600 mt-2">{posts?.data.filter((post: DraftPublic) => !post.is_published).length}</p>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-2">
+                <div className="p-6">
+                    <h2 className="text-xl font-semibold text-gray-800">Recent Posts</h2>
+                </div>
+                <Table>
+                    <THead>
+                        <TR>
+                            <TH>ID</TH>
+                            <TH>Title</TH>
+                            <TH>Content</TH>
+                            <TH>Actions</TH>
+                            <TH>Status</TH>
+                        </TR>
+                    </THead>
+                    {isPending ? (
+                        <TBody>
+                            <TR>
+                                {new Array(6).fill(null).map((_, index) => (
+                                    <TD key={index}>
+                                        <SkeletonText noOfLines={5} paddingBlock="16px" />
+                                    </TD>
+                                ))}
+                            </TR>
+                        </TBody>
+                    ) : (
+                        <TBody>
+                            {posts?.data.map((post: DraftPublic, index: number) => (
+                                <TR key={post.id} className="relative">
+                                    <TD>{index + 1})</TD>
+                                    <TD className="truncate max-w-40">{post.title}</TD>
+                                    <TD className="truncate max-w-40">
+                                        <div className="space-y-2">
+                                            <p className="text-default-800">{post.content}</p>
+                                            <div className="text-sm text-gray-500">
+                                                {post.created_at && <span>{format(new Date(post.created_at as string), "MMM d, yyyy h:mm a")}</span>}
+                                            </div>
+                                            {post.scheduled_time && (
+                                                <div className="flex items-center gap-2 text-sm text-gray-500">
+                                                    <Calendar className="w-4 h-4" />
+                                                    <span>Scheduled for: {format(new Date(post.scheduled_time), "MMM d, yyyy h:mm a")}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </TD>
+                                    <TD>
+                                        <div className="flex items-center gap-2">
+                                            {!post.is_published && (
+                                                <>
+                                                    <button
+                                                        onClick={() => publishPost(post.id as string)}
+                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                                    >
+                                                        <Send className="w-5 h-5" />
+                                                    </button>
+                                                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+                                                        <EditIcon className="w-5 h-5" />
+                                                    </button>
+                                                    <Button
+                                                        className="text-red-600 hover:bg-red-50 rounded-full p-1 min-w-0 h-auto bg-transparent"
+                                                        onClick={() => handleDelete(post.id as string)}
+                                                    >
+                                                        <Trash className="w-5 h-5" />
+                                                    </Button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </TD>
+                                    <TD>
+                                        <span className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(getPostStatus(post))}`}>
+                                            {getPostStatus(post)}
+                                        </span>
+                                    </TD>
+                                </TR>
+                            ))}
+                        </TBody>
+                    )}
+                </Table>
+
+                <Pagination
+                    page={page}
+                    onChangePage={setPage}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                    count={Math.ceil((posts?.count as number) / PER_PAGE)}
+                />
+            </div>
+            <div className="bg-red-500 p-4 absolute right-0 top-0">i should be the form</div>
+            {confirmationModal.isOpen && (
+                <Modal onClose={confirmationModal.close}>
+                    <Confirm
+                        title="Delete draft?"
+                        content="Are you sure you want to delete this draft? This action cannot be undone."
+                        onClose={confirmationModal.close}
+                        queryKey="drafts"
+                        onConfirm={DraftService.delete({ id: id })}
+                    />
+                </Modal>
+            )}
+        </div>
+    );
+};
+
+export { Dashboard };

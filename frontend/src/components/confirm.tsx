@@ -1,83 +1,82 @@
-import React, { useState } from "react"
-import { Button } from "./ui/button"
+import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { type ApiError } from "@/client";
+import useCustomToast from "@/hooks/useCustomToast";
+import { handleError } from "@/utils";
+import { Button } from "@/components/ui/button";
 
 interface Props {
-  title?: string
-  onConfirm?: () => void
-  onClose?: () => void
+    title?: string;
+    content?: string;
+    onConfirm: any;
+    queryKey?: string;
+    onClose?: () => void;
 }
 
 const Confirm: React.FC<Props> = ({
-  title = "Confirm?",
-  onConfirm,
-  onClose,
+    title = "Confirm?",
+    content = "Are you sure you want to delete this item? This action cannot be undone.",
+    onConfirm,
+    queryKey,
+    onClose,
 }) => {
-  const [isPending, setIsPending] = useState<boolean>(false)
+    const queryClient = useQueryClient();
+    const showToast = useCustomToast();
 
-  const onSubmit = async () => {
-    setIsPending(true)
-    onConfirm?.()
-  }
+    const mutation = useMutation({
+        mutationFn: () => onConfirm,
+        onSuccess: () => {
+            showToast.success("Success", "Your account has been successfully deleted.");
+            onClose?.();
+        },
+        onError: (err: ApiError) => {
+            handleError(err, showToast);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: [queryKey] });
+        },
+    });
 
-  return (
-    <React.Fragment>
-      <div className="mx-auto w-full p-8">
-        <div>
-          <div className="pb-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
-            <div className="flex">
-              <div className="flex items-center">
-                <div className="flex grow flex-col gap-1">
-                  <h2 className="text-lg font-semibold leading-6 text-default-800">
-                    {title}
-                  </h2>
+    const onSubmit = async () => {
+        mutation.mutate();
+    };
+
+    return (
+        <React.Fragment>
+            <div className="mx-auto w-full p-8">
+                <div>
+                    <div className="pb-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
+                        <div className="flex">
+                            <div className="flex items-center">
+                                <div className="flex grow flex-col gap-1">
+                                    <h2 className="text-lg font-semibold leading-6 text-default-800">{title}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-sm text-default-500 mt-6">{content}</p>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-8">
+                        <Button className="min-w-32" color="default" variant="shadow" onClick={onClose} disabled={mutation.isPending}>
+                            Cancel
+                        </Button>
+                        <Button
+                            className="min-w-32"
+                            color="danger"
+                            variant="shadow"
+                            onClick={onSubmit}
+                            disabled={mutation.isPending}
+                            isLoading={mutation.isPending}
+                        >
+                            Confirm
+                        </Button>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div>
-            <p className="text-sm text-default-500 mt-6">
-              Are you sure you want to delete this user? All of your data will
-              be permanently removed from our servers forever. This action
-              cannot be undone.
-            </p>
-          </div>
-          <div className="flex justify-end gap-2 mt-8">
-            <Button
-              className="min-w-36"
-              color="default"
-              variant="shadow"
-              onClick={onClose}
-            >
-              Close
-            </Button>
-            <div>
-              {isPending ? (
-                <Button
-                  disabled
-                  isLoading
-                  className="min-w-36"
-                  color="danger"
-                  variant="shadow"
-                >
-                  Deleting...
-                </Button>
-              ) : (
-                <Button
-                  className="min-w-36"
-                  color="danger"
-                  type="submit"
-                  variant="shadow"
-                  onClick={onSubmit}
-                >
-                  Delete
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </React.Fragment>
-  )
-}
+        </React.Fragment>
+    );
+};
 
-export { Confirm }
+export { Confirm };
