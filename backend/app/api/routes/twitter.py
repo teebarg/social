@@ -6,9 +6,10 @@ from pydantic import BaseModel
 from requests.exceptions import RequestException
 from requests_oauthlib import OAuth1
 
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, CurrentUser
 from app.core.config import settings
-from app.models import Tweet
+from app.models import Draft, Tweet
+from datetime import datetime
 
 router = APIRouter()
 
@@ -21,11 +22,11 @@ BACKOFF_FACTOR = 2  # Exponential backoff factor
 
 # Pydantic model for the tweet content
 class TweetRequest(BaseModel):
-    content: str
+    id: str
 
 
 @router.post("/")
-async def post_tweet(db: SessionDep, tweet: TweetRequest):
+async def post_tweet(db: SessionDep,  current_user: CurrentUser, tweet: TweetRequest):
     """
     Endpoint to post a tweet to Twitter with validation, retries, and database logging.
 
@@ -36,8 +37,16 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
     Returns:
         dict: Response from the Twitter API or error details.
     """
+    draft = db.get(Draft, tweet.id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    if not current_user.is_superuser and (draft.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    
+    content = draft.content
+    
     # Validate content length
-    if len(tweet.content) > 280:
+    if len(content) > 280:
         return {
             "success": False,
             "error": "Content exceeds the maximum length of 280 characters",
@@ -52,7 +61,7 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
     )
 
     # # Create the payload for the tweet
-    payload = {"text": tweet.content}
+    payload = {"text": content}
 
     retries = 0
     while retries < MAX_RETRIES:
@@ -64,11 +73,17 @@ async def post_tweet(db: SessionDep, tweet: TweetRequest):
                 # Success: Save to database
                 twitter_response = response.json()
                 new_tweet = Tweet(
-                    content=tweet.content,
+                    content=content,
                     twitter_id=twitter_response.get("data", {}).get("id"),
                 )
                 db.add(new_tweet)
                 db.commit()
+
+                # set is_published
+                draft.sqlmodel_update({"is_published": True, "updated_at": datetime.now()})
+                db.add(draft)
+                db.commit()
+
                 return {
                     "message": "Tweet posted successfully",
                     "tweet": twitter_response,

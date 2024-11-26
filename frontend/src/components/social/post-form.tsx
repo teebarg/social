@@ -28,7 +28,7 @@ const CreatePost: React.FC<Props> = () => {
     const mutation = useMutation({
         mutationFn: (data: DraftCreate) => DraftService.create({ requestBody: data }),
         onSuccess: () => {
-            showToast.success("Success!", "Draft updated successfully.");
+            showToast.success("Success!", "Draft created successfully.");
             setContent("");
             setTitle("");
             setScheduledFor(undefined);

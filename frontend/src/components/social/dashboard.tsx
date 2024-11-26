@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { FacebookIcon, Trash, EditIcon, Send, Calendar } from "nui-react-icons";
+import { FacebookIcon, Trash, EditIcon, Calendar } from "nui-react-icons";
 import { DraftPublic, DraftService, DraftsPublic } from "@/client";
 import { Button } from "@/components/ui/button";
 import { Modal } from "../modal";
@@ -9,6 +9,9 @@ import { useOverlayTriggerState } from "react-stately";
 import { Pagination } from "../ui/pagination";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table.tsx";
 import SkeletonText from "@/components/ui/skeleton-text.tsx";
+import { SlideOver } from "@/components/slideover";
+import { UpdatePost } from "./post-update-form";
+import { Publish } from "./publish";
 
 const PER_PAGE = 5;
 
@@ -20,16 +23,17 @@ const PlatformIcons = {
 
 type Props = {
     posts?: DraftsPublic;
-    publishPost: (id: string) => void;
     page: number;
     setPage: (page: number) => void;
     hasNextPage: boolean;
     isPending: boolean;
 };
 
-const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNextPage, isPending }) => {
+const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPending }) => {
     const confirmationModal = useOverlayTriggerState({});
     const [id, setId] = useState<string>("");
+    const [post, setPost] = useState<any>(null);
+    const slideOverState = useOverlayTriggerState({});
 
     const getPostStatus = (post: any) => {
         if (post.is_published) return "published";
@@ -46,6 +50,11 @@ const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNext
             default:
                 return "bg-orange-100 text-orange-700";
         }
+    };
+
+    const handleEdit = (post: any) => {
+        setPost(post);
+        slideOverState.open();
     };
 
     const handleDelete = (id: string) => {
@@ -120,13 +129,11 @@ const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNext
                                         <div className="flex items-center gap-2">
                                             {!post.is_published && (
                                                 <>
+                                                    <Publish id={post.id as string} />
                                                     <button
-                                                        onClick={() => publishPost(post.id as string)}
-                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                                                        onClick={() => handleEdit(post)}
                                                     >
-                                                        <Send className="w-5 h-5" />
-                                                    </button>
-                                                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
                                                         <EditIcon className="w-5 h-5" />
                                                     </button>
                                                     <Button
@@ -158,7 +165,6 @@ const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNext
                     count={Math.ceil((posts?.count as number) / PER_PAGE)}
                 />
             </div>
-            <div className="bg-red-500 p-4 absolute right-0 top-0">i should be the form</div>
             {confirmationModal.isOpen && (
                 <Modal onClose={confirmationModal.close}>
                     <Confirm
@@ -169,6 +175,11 @@ const Dashboard: React.FC<Props> = ({ posts, publishPost, page, setPage, hasNext
                         onConfirm={DraftService.delete({ id: id })}
                     />
                 </Modal>
+            )}
+            {slideOverState.isOpen && (
+                <SlideOver className="bg-default-50" isOpen={slideOverState.isOpen} title="Edit Product" onClose={slideOverState.close}>
+                    <UpdatePost post={post} onClose={slideOverState.close} />
+                </SlideOver>
             )}
         </div>
     );

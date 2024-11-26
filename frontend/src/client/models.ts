@@ -109,6 +109,16 @@ export type DraftCreate = {
     scheduled_time?: Date;
 };
 
+export type DraftUpdate = {
+    title?: string | null;
+    content?: string | null;
+    scheduled_time?: Date | null;
+};
+
+export type DraftPublish = {
+    id: string
+};
+
 export type DraftPublic = {
     id?: string;
     title: string;
@@ -126,16 +136,16 @@ export type DraftsPublic = {
     count: number;
 };
 
-
-export type SocialPlatform = 'instagram' | 'facebook' | 'twitter';
+export type SocialPlatform = "instagram" | "facebook" | "twitter";
 
 export interface Post {
-  id: string;
-  content: string;
-  image?: string;
-  platforms: SocialPlatform[];
-  status: 'draft' | 'published';
-  scheduledFor?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    title: string;
+    content: string;
+    image?: string;
+    platforms: SocialPlatform[];
+    status: "draft" | "published";
+    scheduled_time?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }

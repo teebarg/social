@@ -19,8 +19,10 @@ import type {
     UserUpdateMe,
     UsersPublic,
     DraftCreate,
+    DraftUpdate,
     DraftPublic,
     DraftsPublic,
+    DraftPublish,
 } from "./models";
 
 export type TDataLoginAccessToken = {
@@ -481,7 +483,6 @@ export class ItemsService {
             },
         });
     }
-    
 
     /**
      * Delete Item
@@ -507,13 +508,22 @@ export class ItemsService {
 export type TDataCreateDraft = {
     requestBody: DraftCreate;
 };
+export type TDataUpdateDraft = {
+    id: string;
+    requestBody: DraftUpdate;
+};
 export type TDataDeleteDraft = {
     id: string;
 };
-
 export type TDataReadDrafts = {
     limit?: number;
     skip?: number;
+};
+export type TDataReadDraft = {
+    id: string;
+};
+export type TDataPublishDraft = {
+    requestBody: DraftPublish;
 };
 
 export class DraftService {
@@ -559,7 +569,7 @@ export class DraftService {
 
     /**
      * Delete Draft
-     * Delete an item.
+     * Delete an draft.
      * @returns Message Successful Response
      * @throws ApiError
      */
@@ -578,16 +588,19 @@ export class DraftService {
     }
 
     /**
-     * Update User Me
-     * Update own user.
-     * @returns UserPublic Successful Response
+     * Update Draft
+     * Update an draft.
+     * @returns DraftPublic Successful Response
      * @throws ApiError
      */
-    public static update(data: TDataUpdateUserMe): CancelablePromise<UserPublic> {
-        const { requestBody } = data;
+    public static update(data: TDataUpdateDraft): CancelablePromise<DraftPublic> {
+        const { id, requestBody } = data;
         return __request(OpenAPI, {
             method: "PUT",
             url: "/api/v1/drafts/{id}",
+            path: {
+                id,
+            },
             body: requestBody,
             mediaType: "application/json",
             errors: {
@@ -596,20 +609,39 @@ export class DraftService {
         });
     }
 
+
     /**
-     * Read User By Id
-     * Get a specific user by id.
-     * @returns UserPublic Successful Response
+     * Read Draft
+     * Get draft by ID.
+     * @returns DraftPublic Successful Response
      * @throws ApiError
      */
-    public static get(data: TDataReadUserById): CancelablePromise<UserPublic> {
-        const { userId } = data;
+    public static get(data: TDataReadDraft): CancelablePromise<DraftPublic> {
+        const { id } = data;
         return __request(OpenAPI, {
             method: "GET",
             url: "/api/v1/drafts/{id}",
             path: {
-                user_id: userId,
+                id,
             },
+            errors: {
+                422: "Validation Error",
+            },
+        });
+    }
+
+    /**
+     * Publish Draft
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static publish(data: TDataPublishDraft): CancelablePromise<Message> {
+        const { requestBody } = data;
+        return __request(OpenAPI, {
+            method: "POST",
+            url: "/api/v1/twitter/",
+            body: requestBody,
+            mediaType: "application/json",
             errors: {
                 422: "Validation Error",
             },
