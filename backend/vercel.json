@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "buildCommand": "poetry install",
+    "buildCommand": "pip install .",
     "devCommand": "fastapi run app/main.py --host 0.0.0.0 --port $PORT",
     "builds": [
       {
