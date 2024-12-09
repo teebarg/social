@@ -1,4 +1,4 @@
-from app.models import PushSubscription
+from app.models import Message, PushSubscription
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -14,6 +14,7 @@ from pywebpush import webpush, WebPushException
 
 from app.api.deps import SessionDep
 from app.core.config import settings
+from sqlmodel import  select
 
 
 # Create a router for collections
@@ -53,6 +54,22 @@ async def subscribe(subscription: PushSubscriptionRequest, db: SessionDep):
     db.add(new_subscription)
     db.commit()
     return {"message": "Subscription added successfully."}
+
+
+@router.delete("/{id}")
+def unsubscribe(
+    db: SessionDep, id: str
+) -> Message:
+    """
+    Delete a push subscription.
+    """
+    statement = select(PushSubscription).where(PushSubscription.auth == id)
+    item = db.exec(statement).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    db.delete(item)
+    db.commit()
+    return Message(message="Subscription deleted successfully")
 
 
 @router.post("/send-notification")
