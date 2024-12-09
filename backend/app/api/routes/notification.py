@@ -1,3 +1,4 @@
+import json
 from app.models import Message, PushSubscription
 from fastapi import (
     APIRouter,
@@ -21,8 +22,9 @@ from sqlmodel import  select
 router = APIRouter()
 
 # VAPID keys
-VAPID_PRIVATE_KEY = "<YOUR_PRIVATE_KEY>"
-VAPID_CLAIMS = {"sub": "mailto:your-email@example.com"}
+VAPID_PRIVATE_KEY = settings.VAPID_PRIVATE_KEY
+VAPID_CLAIMS = {"sub": "mailto:{}".format(settings.ADMIN_EMAIL)}
+
 
 # Pydantic models
 class PushSubscriptionRequest(BaseModel):
@@ -30,11 +32,23 @@ class PushSubscriptionRequest(BaseModel):
     keys: dict
     group: Optional[str] = None  # Optional group for the subscription
 
+class PushSubscriptionSearch(BaseModel):
+    endpoint: str
+
 class NotificationRequest(BaseModel):
     title: str
     body: str
     group: Optional[str] = None  # Target group
     users: Optional[List[int]] = None  # Specific user IDs to target
+
+
+@router.post("/subscription")
+def get_subscription_by_endpoint(db: SessionDep, data: PushSubscriptionSearch):
+    """Get a subscription by its endpoint."""
+    subscription = db.query(PushSubscription).filter_by(endpoint=data.endpoint).first()
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    return subscription
 
 
 @router.post("/subscribe")
@@ -101,9 +115,9 @@ async def send_notification(notification: NotificationRequest, db: SessionDep):
                         "auth": subscriber.auth,
                     },
                 },
-                data=str({"title": notification.title, "body": notification.body}),
-                vapid_private_key=settings.VAPID_PUBLIC_KEY,
-                vapid_claims=settings.VAPID_PRIVATE_KEY,
+                data=json.dumps({"title": notification.title, "body": notification.body}),
+                vapid_private_key=settings.VAPID_PRIVATE_KEY,
+                vapid_claims=VAPID_CLAIMS
             )
         except WebPushException as ex:
             print(f"Failed to send notification: {ex}")
