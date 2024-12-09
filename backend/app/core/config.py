@@ -60,7 +60,8 @@ class Settings(BaseSettings):
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
+            # scheme="postgresql+psycopg",
+            scheme="postgresql",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_SERVER,
@@ -126,6 +127,9 @@ class Settings(BaseSettings):
     TWITTER_BEARER_TOKEN: str = ""
     TWITTER_ACCESS_TOKEN: str = ""
     TWITTER_ACCESS_TOKEN_SECRET: str = ""
+
+    VAPID_PUBLIC_KEY: str =""
+    VAPID_PRIVATE_KEY: str =""
 
 
 settings = Settings()  # type: ignore

@@ -191,3 +191,15 @@ class DraftPublic(DraftBase):
 class DraftsPublic(SQLModel):
     data: list[DraftPublic]
     count: int
+
+class PushSubscriptionBase(SQLModel):
+    endpoint: str = Field(min_length=1, max_length=255, unique=True, index=True)
+    p256dh: str = Field(min_length=1, max_length=255)
+    auth: str = Field(min_length=1, max_length=255)
+    group: str | None = Field(default=None, max_length=255)
+    created_at: datetime | None = Field(default=datetime.now())
+
+class PushSubscription(PushSubscriptionBase, table=True):
+    __tablename__ = "push_subscriptions"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
