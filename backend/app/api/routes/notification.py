@@ -3,6 +3,7 @@ from app.models import Message, PushSubscription
 from fastapi import (
     APIRouter,
     HTTPException,
+    BackgroundTasks
 )
 from pydantic import BaseModel
 
@@ -87,7 +88,7 @@ def unsubscribe(
 
 
 @router.post("/send-notification")
-async def send_notification(notification: NotificationRequest, db: SessionDep):
+async def send_notification(notification: NotificationRequest, db: SessionDep, background_tasks: BackgroundTasks):
     """Send push notifications to a target group or specific users."""
     if not notification.group and not notification.users:
         raise HTTPException(status_code=400, detail="Group or user IDs must be specified.")
@@ -103,6 +104,12 @@ async def send_notification(notification: NotificationRequest, db: SessionDep):
     if not subscriptions:
         raise HTTPException(status_code=404, detail="No subscriptions found for the target.")
 
+    # Add the notification sending task to the background
+    background_tasks.add_task(send_notifications_to_subscribers, subscriptions, notification)
+
+    return {"message": "Notifications are being sent."}
+
+def send_notifications_to_subscribers(subscriptions, notification):
     failed_subscriptions = []
 
     for subscriber in subscriptions:
@@ -120,12 +127,8 @@ async def send_notification(notification: NotificationRequest, db: SessionDep):
                 vapid_claims=VAPID_CLAIMS
             )
         except WebPushException as ex:
-            print(f"Failed to send notification: {ex}")
             failed_subscriptions.append(subscriber.id)
 
-    # Return response with failed IDs
-    return {
-        "message": "Notifications sent",
-        "failed_count": len(failed_subscriptions),
-        "failed_ids": failed_subscriptions,
-    }
+    # Log or handle failed subscriptions as needed
+    if failed_subscriptions:
+        print(f"Failed to send notifications to: {failed_subscriptions}")

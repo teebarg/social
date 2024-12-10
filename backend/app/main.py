@@ -22,7 +22,7 @@ app = FastAPI(
 
 @app.get("/")
 async def index():
-    return {"message": "Server is running!!!"}
+    return {"message": "Server is running"}
 
 
 @app.get("/health-check")
