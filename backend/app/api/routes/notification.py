@@ -122,7 +122,7 @@ def send_notifications_to_subscribers(subscriptions, notification):
                         "auth": subscriber.auth,
                     },
                 },
-                data=json.dumps({"title": notification.title, "body": notification.body}),
+                data=json.dumps({"title": notification.title, "body": notification.body, "path": "/collections"}),
                 vapid_private_key=settings.VAPID_PRIVATE_KEY,
                 vapid_claims=VAPID_CLAIMS
             )

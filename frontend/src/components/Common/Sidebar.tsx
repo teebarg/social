@@ -2,7 +2,7 @@ import type { UserPublic } from "@/client/models";
 import { cn } from "@/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, CogSixTooth, HomeIcon, Users, Window } from "nui-react-icons";
+import { Bell, ChevronRight, CogSixTooth, HomeIcon, Users, Window } from "nui-react-icons";
 import React, { useState } from "react";
 
 interface MenuItem {
@@ -194,6 +194,17 @@ const Sidebar: React.FC = () => {
                     label: "Posts",
                     href: "/posts",
                     icon: <HomeIcon size={18} />,
+                },
+            ],
+        },
+        {
+            subMenu: "Push Notification",
+            icon: <Bell size={20} />,
+            menuItems: [
+                {
+                    label: "Send",
+                    href: "/notification",
+                    icon: <Bell size={18} />,
                 },
             ],
         },
