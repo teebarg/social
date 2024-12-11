@@ -1,16 +1,29 @@
 import { useState } from "react";
-import { NotificationPreview } from "../../types/notification";
+import { NotificationPreview } from "@/types/notification";
 import { EyeIcon, Send } from "nui-react-icons";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {Select, SelectItem} from "@/components/ui/select"
 
 interface NotificationFormProps {
     onPreview: (preview: NotificationPreview) => void;
     onSend: (notification: NotificationPreview) => void;
 }
 
+const frameworks = [
+    { value: "next", label: "Next.js" },
+    { value: "react", label: "React" },
+    { value: "vue", label: "Vue" },
+    { value: "angular", label: "Angular" },
+    { value: "svelte", label: "Svelte" },
+];
+
 export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
-    const [title, setTitle] = useState("");
+    const [title, setTitle] = useState<string>("");
     const [body, setBody] = useState("");
     const [icon, setIcon] = useState("");
+    const [value, setValue] = useState<string>("");
 
     const handlePreview = () => {
         onPreview({ title, body, icon });
@@ -29,12 +42,12 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                     Title
                 </label>
-                <input
+                <Input
                     type="text"
                     id="title"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                    className="mt-1 shadow-sm sm:text-sm"
                     placeholder="Notification Title"
                 />
             </div>
@@ -43,45 +56,41 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
                 <label htmlFor="body" className="block text-sm font-medium text-gray-700">
                     Message
                 </label>
-                <textarea
-                    id="body"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    rows={3}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder="Notification message..."
-                />
+                <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} className="mt-1" placeholder="Notification message..." />
             </div>
 
             <div>
                 <label htmlFor="icon" className="block text-sm font-medium text-gray-700">
                     Icon (emoji or URL)
                 </label>
-                <input
+                <Input
                     type="text"
                     id="icon"
                     value={icon}
-                    onChange={(e) => setIcon(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                    className="mt-1"
                     placeholder="🔔"
                 />
             </div>
 
+            <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Select Framework</label>
+                <Select value={value} onChange={setValue} placeholder="Select a framework">
+                    {frameworks.map((framework) => (
+                        <SelectItem key={framework.value} value={framework.value}>
+                            {framework.label}
+                        </SelectItem>
+                    ))}
+                </Select>
+            </div>
+
             <div className="flex space-x-4">
-                <button
-                    onClick={handlePreview}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    <EyeIcon className="h-4 w-4 mr-2" />
+                <Button className="min-w-24" color="primary" onClick={handlePreview} startContent={<EyeIcon className="h-4 w-4" />}>
                     Preview
-                </button>
-                <button
-                    onClick={handleSend}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                    <Send className="h-4 w-4 mr-2" />
+                </Button>
+                <Button className="min-w-24" color="secondary" onClick={handleSend} startContent={<Send className="h-4 w-4" />}>
                     Send
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -84,8 +84,7 @@ function SendNotification() {
                     </main>
                 </div>
             </div>
-            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Form Section */}
+            {/* <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <h2 className="text-2xl font-semibold mb-4">Send Push Notification</h2>
                     <form className="space-y-4">
@@ -151,11 +150,9 @@ function SendNotification() {
                     </form>
                 </div>
 
-                {/* Preview Section */}
                 <div>
                     <h2 className="text-2xl font-semibold mb-4">Preview</h2>
                     <div className="border rounded-lg p-4 max-w-sm mx-auto bg-white shadow-lg">
-                        {/* Phone Status Bar */}
                         <div className="flex justify-between items-center text-xs text-gray-600 mb-2">
                             <span>9:41</span>
                             <div className="flex space-x-1">
@@ -164,7 +161,6 @@ function SendNotification() {
                             </div>
                         </div>
 
-                        {/* App Icon and Title */}
                         <div className="flex items-start space-x-2 mb-2">
                             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-xs">App</div>
                             <div className="flex-1">
@@ -173,23 +169,20 @@ function SendNotification() {
                                     <span className="text-xs text-gray-500">now</span>
                                 </div>
                                 <h3 className="font-medium text-sm">
-                                    {/* Show entered title or placeholder */}
                                     Preview Title
                                 </h3>
                             </div>
                         </div>
 
-                        {/* Notification Body */}
                         <p className="text-sm text-gray-600">Preview notification message will appear here...</p>
                     </div>
 
-                    {/* Preview Info */}
                     <div className="mt-4 text-sm text-gray-600">
                         <p className="mb-2">📱 This is how your notification will appear on user devices</p>
-                        <p>👥 Recipients: {/* Show target group or user count */} All Users</p>
+                        <p>👥 Recipients: All Users</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 }
