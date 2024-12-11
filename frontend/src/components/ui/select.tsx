@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, createContext, useContext } from "r
 import { cn } from "@/utils";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { Check, ChevronDown } from "nui-react-icons";
+import { OverlayContainer, useOverlay } from "@react-aria/overlays";
 
 type SelectContextType = {
     value: string;
@@ -88,12 +89,27 @@ export function Select({ value, onChange, placeholder = "Select an option", chil
                         className={cn("h-4 w-4 text-muted-foreground transition-transform duration-200", isOpen && "transform rotate-180")}
                     />
                 </div>
-
                 {isOpen && (
+                    <OverlayContainer>
+                        <div
+                            // {...overlayProps}
+                            // ref={overlayRef}
+                            className={cn("absolute z-50 w-full mt-1 rounded-md shadow-lg", "bg-background border animate-in fade-in-0 zoom-in-95")}
+                            // style={{
+                            //     top: popoverPosition.top,
+                            //     left: popoverPosition.left,
+                            // }}
+                        >
+                            <div className="py-1 max-h-60 overflow-auto">{children}</div>
+                        </div>
+                    </OverlayContainer>
+                )}
+
+                {/* {isOpen && (
                     <div className={cn("absolute z-50 w-full mt-1 rounded-md shadow-lg", "bg-background border animate-in fade-in-0 zoom-in-95")}>
                         <div className="py-1 max-h-60 overflow-auto">{children}</div>
                     </div>
-                )}
+                )} */}
             </div>
         </SelectProvider>
     );

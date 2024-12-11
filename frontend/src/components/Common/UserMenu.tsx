@@ -1,7 +1,7 @@
 import Dropdown from "@/components/ui/dropdown"
 import useAuth from "@/hooks/useAuth"
 import { Link } from "@tanstack/react-router"
-import { User, UserCircleMini } from "nui-react-icons"
+import { LogOut, User, UserCircleMini } from "nui-react-icons"
 
 const UserMenu = () => {
   const { logout } = useAuth()
@@ -23,7 +23,7 @@ const UserMenu = () => {
               <div className="mb-2">
                 <Link className="flex w-full items-center" to="settings">
                   <span className="mr-2">
-                    <User />
+                    <User viewBox="0 0 24 24" className="h-6 w-6" />
                   </span>
                   <span>My profile</span>
                 </Link>
@@ -33,7 +33,7 @@ const UserMenu = () => {
                 onClick={handleLogout}
               >
                 <span className="mr-2">
-                  <User />
+                  <LogOut viewBox="0 0 24 24" className="h-6 w-6" />
                 </span>
                 <span>Log out</span>
               </button>

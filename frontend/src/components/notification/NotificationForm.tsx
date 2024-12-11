@@ -4,7 +4,8 @@ import { EyeIcon, Send } from "nui-react-icons";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {Select, SelectItem} from "@/components/ui/select"
+import { Select, Item } from "@/components/ui/select1";
+import { Label } from "@/components/ui/label";
 
 interface NotificationFormProps {
     onPreview: (preview: NotificationPreview) => void;
@@ -38,18 +39,29 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
 
     return (
         <div className="space-y-4">
-            <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                    Title
-                </label>
-                <Input
-                    type="text"
-                    id="title"
-                    value={title}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-                    className="mt-1 shadow-sm sm:text-sm"
-                    placeholder="Notification Title"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                        type="text"
+                        id="title"
+                        value={title}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                        className="mt-1 shadow-sm sm:text-sm"
+                        placeholder="Notification Title"
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="icon">Icon (emoji or URL)</Label>
+                    <Input
+                        type="text"
+                        id="icon"
+                        value={icon}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                        className="mt-1"
+                        placeholder="🔔"
+                    />
+                </div>
             </div>
 
             <div>
@@ -59,29 +71,18 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
                 <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} className="mt-1" placeholder="Notification message..." />
             </div>
 
-            <div>
-                <label htmlFor="icon" className="block text-sm font-medium text-gray-700">
-                    Icon (emoji or URL)
-                </label>
-                <Input
-                    type="text"
-                    id="icon"
-                    value={icon}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-                    className="mt-1"
-                    placeholder="🔔"
-                />
-            </div>
-
-            <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Select Framework</label>
-                <Select value={value} onChange={setValue} placeholder="Select a framework">
-                    {frameworks.map((framework) => (
-                        <SelectItem key={framework.value} value={framework.value}>
-                            {framework.label}
-                        </SelectItem>
-                    ))}
-                </Select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div>
+                    <Select
+                        label="Select Group"
+                        items={frameworks}
+                        selectedKey={value}
+                        onSelectionChange={(selected) => setValue(selected as string)}
+                        className="w-full"
+                    >
+                        {(item) => <Item key={item.value}>{item.label}</Item>}
+                    </Select>
+                </div>
             </div>
 
             <div className="flex space-x-4">
