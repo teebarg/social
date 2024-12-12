@@ -30,14 +30,14 @@ export function Select(props: Props) {
 
     return (
         <div className={cn("inline-flex flex-col relative mt-4", props.className)}>
-            <div {...labelProps} className="block text-sm font-medium text-gray-700 text-left cursor-default">
+            <div {...labelProps} className="block text-sm font-medium text-default-700 text-left cursor-default">
                 {props.label}
             </div>
             <HiddenSelect state={state} triggerRef={ref} label={props.label} name={props.name} />
             <button
                 {...buttonProps}
                 ref={ref}
-                className={`p-1 pl-3 py-1 relative inline-flex flex-row items-center justify-between rounded-md overflow-hidden cursor-default shadow-sm border-2 outline-none ${
+                className={`pl-3 flex-row items-center justify-between rounded-md overflow-hidden cursor-default shadow-sm border-2 relative px-3 w-full inline-flex tap-highlight-transparent group-data-[focus=true]:bg-default-50 gap-0 bg-default-100 data-[hover=true]:bg-default-50 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 h-14 min-h-14 py-2 ${
                     state.isOpen ? "bg-gray-100" : "bg-white"
                 }`}
             >
