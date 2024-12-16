@@ -24,11 +24,6 @@ function SendNotification() {
         icon: "",
     });
 
-    const handleSend = (notification: NotificationPreviewType) => {
-        // In a real application, this would send the notification to users
-        alert("Notification sent successfully!");
-    };
-
     return (
         <>
             <div className="bg-content2 w-full min-h-screen">
@@ -49,7 +44,7 @@ function SendNotification() {
                                         <div className="bg-white overflow-hidden shadow rounded-lg">
                                             <div className="px-4 py-5 sm:p-6">
                                                 <h2 className="text-lg font-medium text-gray-900 mb-4">Compose Notification</h2>
-                                                <NotificationForm onPreview={setPreview} onSend={handleSend} />
+                                                <NotificationForm onPreview={setPreview} />
                                             </div>
                                         </div>
 

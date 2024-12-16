@@ -203,3 +203,37 @@ class PushSubscription(PushSubscriptionBase, table=True):
     __tablename__ = "push_subscriptions"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+
+# Shared properties
+class NotificationTemplateBase(SQLModel):
+    icon: str = Field(min_length=1, max_length=255)
+    title: str = Field(min_length=1, max_length=255)
+    body: str = Field(min_length=1, max_length=255)
+    excerpt: str = Field(min_length=1, max_length=255)
+    created_at: datetime | None = Field(default=datetime.now())
+
+
+# Properties to receive on item creation
+class NotificationTemplateCreate(NotificationTemplateBase):
+    pass
+
+
+# Properties to receive on item update
+class NotificationTemplateUpdate(NotificationTemplateBase):
+    pass
+
+
+# Database model, database table inferred from class name
+class NotificationTemplate(NotificationTemplateBase, table=True):
+    __tablename__ = "notification_templates"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+
+# Properties to return via API, id is always required
+class NotificationTemplatePublic(NotificationTemplateBase):
+    id: uuid.UUID
+
+
+class NotificationTemplatesPublic(SQLModel):
+    data: list[NotificationTemplatePublic]

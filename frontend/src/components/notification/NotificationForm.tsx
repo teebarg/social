@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NotificationPreview } from "@/types/notification";
-import { EyeIcon, Send } from "nui-react-icons";
+import { EyeIcon } from "nui-react-icons";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 
 interface NotificationFormProps {
     onPreview: (preview: NotificationPreview) => void;
-    onSend: (notification: NotificationPreview) => void;
 }
 
 const frameworks = [
@@ -20,7 +19,7 @@ const frameworks = [
     { value: "svelte", label: "Svelte" },
 ];
 
-export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
+export function NotificationForm({ onPreview }: NotificationFormProps) {
     const [title, setTitle] = useState<string>("");
     const [body, setBody] = useState("");
     const [icon, setIcon] = useState("");
@@ -28,13 +27,6 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
 
     const handlePreview = () => {
         onPreview({ title, body, icon });
-    };
-
-    const handleSend = () => {
-        onSend({ title, body, icon });
-        setTitle("");
-        setBody("");
-        setIcon("");
     };
 
     return (
@@ -57,7 +49,7 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
                         type="text"
                         id="icon"
                         value={icon}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIcon(e.target.value)}
                         className="mt-1"
                         placeholder="🔔"
                     />
@@ -85,12 +77,9 @@ export function NotificationForm({ onPreview, onSend }: NotificationFormProps) {
                 </div>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex">
                 <Button className="min-w-24" color="primary" onClick={handlePreview} startContent={<EyeIcon className="h-4 w-4" />}>
                     Preview
-                </Button>
-                <Button className="min-w-24" color="secondary" onClick={handleSend} startContent={<Send className="h-4 w-4" />}>
-                    Send
                 </Button>
             </div>
         </div>
