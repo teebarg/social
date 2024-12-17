@@ -2,9 +2,17 @@ import { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 import { Message } from "../models";
-import { NotificationCreate, NotificationPublic, NotificationsPublic, NotificationUpdate } from "../models/notification.model";
+import {
+    NotificationCreate,
+    NotificationPublic,
+    NotificationsPublic,
+    NotificationTemplatesPublic,
+    NotificationTemplateUpdate,
+    NotificationTemplateCreate,
+    NotificationTemplatePublic,
+} from "../models/notification.model";
 
-export type TDataReadNotifications = {
+export type TDataRead = {
     limit?: number;
     skip?: number;
 };
@@ -14,9 +22,12 @@ export type TDataCreateNotification = {
 export type TDataReadNotification = {
     id: string;
 };
-export type TDataUpdateNotification = {
+export type TDataCreateNotificationTemplate = {
+    requestBody: NotificationTemplateCreate;
+};
+export type TDataUpdateNotificationTemplate = {
     id: string;
-    requestBody: NotificationUpdate;
+    requestBody: NotificationTemplateUpdate;
 };
 export type TDataDeleteNotification = {
     id: string;
@@ -29,7 +40,7 @@ export class NotificationsService {
      * @returns NotificationsPublic Successful Response
      * @throws ApiError
      */
-    public static readNotifications(data: TDataReadNotifications = {}): CancelablePromise<NotificationsPublic> {
+    public static readNotifications(data: TDataRead = {}): CancelablePromise<NotificationsPublic> {
         const { limit = 100, skip = 0 } = data;
         return __request(OpenAPI, {
             method: "GET",
@@ -97,6 +108,46 @@ export class NotificationsService {
             path: {
                 id,
             },
+            errors: {
+                422: "Validation Error",
+            },
+        });
+    }
+
+    /**
+     * Read NotificationTemplates
+     * Retrieve notification templates.
+     * @returns NotificationTemplatePublic Successful Response
+     * @throws ApiError
+     */
+    public static readTemplates(data: TDataRead = {}): CancelablePromise<NotificationTemplatesPublic> {
+        const { limit = 100, skip = 0 } = data;
+        return __request(OpenAPI, {
+            method: "GET",
+            url: "/api/v1/notifications/templates",
+            query: {
+                skip,
+                limit,
+            },
+            errors: {
+                422: "Validation Error",
+            },
+        });
+    }
+
+    /**
+     * Create NotificationTemplate
+     * Create new notification template.
+     * @returns NotificationTemplatePublic Successful Response
+     * @throws ApiError
+     */
+    public static createTemplate(data: TDataCreateNotificationTemplate): CancelablePromise<NotificationTemplatePublic> {
+        const { requestBody } = data;
+        return __request(OpenAPI, {
+            method: "POST",
+            url: "/api/v1/notifications/templates",
+            body: requestBody,
+            mediaType: "application/json",
             errors: {
                 422: "Validation Error",
             },

@@ -16,3 +16,31 @@ export type NotificationsPublic = {
     data: Array<NotificationPublic>;
     count: number;
 };
+
+
+export type NotificationTemplateCreate = {
+    icon: string;
+    title: string;
+    body: string;
+    excerpt?: string;
+};
+
+export type NotificationTemplateUpdate = {
+    icon?: string | null;
+    title?: string | null;
+    body?: string | null;
+    excerpt?: string | null;
+};
+
+export type NotificationTemplatePublic = {
+    id?: string;
+    icon?: string;
+    title: string;
+    body: string;
+    excerpt: string;
+    created_at?: Date;
+};
+
+export type NotificationTemplatesPublic = {
+    data: Array<NotificationTemplatePublic>;
+};

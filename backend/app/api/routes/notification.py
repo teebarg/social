@@ -93,21 +93,26 @@ def create_notification_template(
 @router.put("/templates/{id}", response_model=NotificationTemplatePublic)
 def update_create_notification_template(
     *,
-    session: SessionDep,
+    db: SessionDep,
     id: uuid.UUID,
     item_in: NotificationTemplateUpdate,
 ):
     """
     Update a notification template.
     """
-    item = session.get(NotificationTemplate, id)
+    item = db.get(NotificationTemplate, id)
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Template not found")
+    
+    # Check if the updated title already exists in another template
+    if item_in.title and db.query(NotificationTemplate).filter(NotificationTemplate.title == item_in.title, NotificationTemplate.id != id).first():
+        raise HTTPException(status_code=422, detail="Title already exists in another template.")
+    
     update_dict = item_in.model_dump(exclude_unset=True)
     item.sqlmodel_update(update_dict)
-    session.add(item)
-    session.commit()
-    session.refresh(item)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
     return item
 
 

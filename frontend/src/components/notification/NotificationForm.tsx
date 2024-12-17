@@ -57,9 +57,7 @@ export function NotificationForm({ onPreview }: NotificationFormProps) {
             </div>
 
             <div>
-                <label htmlFor="body" className="block text-sm font-medium text-gray-700">
-                    Message
-                </label>
+                <Label htmlFor="body">Message</Label>
                 <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} className="mt-1" placeholder="Notification message..." />
             </div>
 

@@ -207,7 +207,7 @@ class PushSubscription(PushSubscriptionBase, table=True):
 
 # Shared properties
 class NotificationTemplateBase(SQLModel):
-    icon: str = Field(min_length=1, max_length=255)
+    icon: str | None = None
     title: str = Field(min_length=1, max_length=255)
     body: str = Field(min_length=1, max_length=255)
     excerpt: str = Field(min_length=1, max_length=255)
