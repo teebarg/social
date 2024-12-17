@@ -39,7 +39,7 @@ def upgrade():
         sa.Column("created_at", sa.DateTime(), nullable=False, default=datetime.utcnow),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_tweets_endpoint"), "push_subscriptions", ["endpoint"], unique=True)
+    op.create_index(op.f("ix_push_subscriptions_endpoint"), "push_subscriptions", ["endpoint"], unique=True)
 
 
 def downgrade():

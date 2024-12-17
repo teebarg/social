@@ -1,5 +1,6 @@
 import json
-from app.models import Message, PushSubscription
+import uuid
+from app.models import Message, NotificationTemplate, NotificationTemplateCreate, NotificationTemplatePublic, NotificationTemplateUpdate, NotificationTemplatesPublic, PushSubscription
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -17,6 +18,9 @@ from pywebpush import webpush, WebPushException
 from app.api.deps import SessionDep
 from app.core.config import settings
 from sqlmodel import  select
+import psycopg2
+from psycopg2.errors import UniqueViolation
+from sqlalchemy.exc import IntegrityError
 
 
 # Create a router for collections
@@ -41,6 +45,90 @@ class NotificationRequest(BaseModel):
     body: str
     group: Optional[str] = None  # Target group
     users: Optional[List[int]] = None  # Specific user IDs to target
+
+class NotificationTemplateRequest(BaseModel):
+    title: str
+    body: str
+    icon: Optional[str] = None
+    exert: Optional[str] = None
+
+class NotificationTemplateSearch(BaseModel):
+    title: str
+
+
+@router.get("/templates")
+def get_templates(db: SessionDep, skip: int = 0, limit: int = 100):
+    """Get notification templates."""
+
+    statement = select(NotificationTemplate).offset(skip).limit(limit)
+    items = db.exec(statement).all()
+
+    return NotificationTemplatesPublic(data=items)
+
+
+@router.post("/templates", response_model=NotificationTemplatePublic)
+def create_notification_template(
+    *, db: SessionDep, item_in: NotificationTemplateCreate
+):
+    """
+    Create new notification template.
+    """
+    item = NotificationTemplate.model_validate(item_in)
+    try:
+        db.add(item)
+        db.commit()
+        db.refresh(item)
+        return item
+    except IntegrityError as e:
+        # Check if it's a UniqueViolation error
+        if isinstance(e.orig, UniqueViolation):
+            raise HTTPException(status_code=422, detail="Duplicate entry detected!")
+        else:
+            # Re-raise if it's another IntegrityError
+            raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="An error occurred")
+
+
+@router.put("/templates/{id}", response_model=NotificationTemplatePublic)
+def update_create_notification_template(
+    *,
+    db: SessionDep,
+    id: uuid.UUID,
+    item_in: NotificationTemplateUpdate,
+):
+    """
+    Update a notification template.
+    """
+    item = db.get(NotificationTemplate, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    # Check if the updated title already exists in another template
+    if item_in.title and db.query(NotificationTemplate).filter(NotificationTemplate.title == item_in.title, NotificationTemplate.id != id).first():
+        raise HTTPException(status_code=422, detail="Title already exists in another template.")
+
+    update_dict = item_in.model_dump(exclude_unset=True)
+    item.sqlmodel_update(update_dict)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+@router.delete("/templates/{id}")
+def delete_template(
+    db: SessionDep, id: uuid.UUID
+) -> Message:
+    """
+    Delete an template.
+    """
+    item = db.get(NotificationTemplate, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Template not found")
+    db.delete(item)
+    db.commit()
+    return Message(message="Template deleted successfully")
 
 
 @router.post("/subscription")
@@ -87,7 +175,7 @@ def unsubscribe(
     return Message(message="Subscription deleted successfully")
 
 
-@router.post("/send-notification")
+@router.post("/")
 async def send_notification(notification: NotificationRequest, db: SessionDep, background_tasks: BackgroundTasks):
     """Send push notifications to a target group or specific users."""
     if not notification.group and not notification.users:
@@ -122,7 +210,7 @@ def send_notifications_to_subscribers(subscriptions, notification):
                         "auth": subscriber.auth,
                     },
                 },
-                data=json.dumps({"title": notification.title, "body": notification.body}),
+                data=json.dumps({"title": notification.title, "body": notification.body, "path": "/collections"}),
                 vapid_private_key=settings.VAPID_PRIVATE_KEY,
                 vapid_claims=VAPID_CLAIMS
             )

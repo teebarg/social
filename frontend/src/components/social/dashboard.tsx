@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { FacebookIcon, Trash, EditIcon, Calendar } from "nui-react-icons";
+import { Trash, EditIcon, Calendar } from "nui-react-icons";
 import { DraftPublic, DraftService, DraftsPublic } from "@/client";
 import { Button } from "@/components/ui/button";
 import { Modal } from "../modal";
@@ -14,12 +14,6 @@ import { UpdatePost } from "./post-update-form";
 import { Publish } from "./publish";
 
 const PER_PAGE = 5;
-
-const PlatformIcons = {
-    facebook: FacebookIcon,
-    // instagram: Instagram,
-    // twitter: Twitter,
-};
 
 type Props = {
     posts?: DraftsPublic;

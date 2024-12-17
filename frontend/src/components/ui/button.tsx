@@ -34,7 +34,7 @@ const buttonConfig: any = {
     },
 
     // Sizes
-    sm: "px-3 min-w-20 h-10 text-tiny gap-2 rounded-small",
+    sm: "px-3 min-w-20 h-10 text-sm gap-2 rounded-small",
     md: "px-4 min-w-20 h-12 text-small gap-2 rounded-medium",
     lg: "px-6 min-w-24 h-14 text-medium gap-3 rounded-large",
 };

@@ -21,6 +21,7 @@ import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutPostsIndexImport } from './routes/_layout/posts.index'
+import { Route as LayoutNotificationIndexImport } from './routes/_layout/notification.index'
 
 // Create/Update Routes
 
@@ -74,6 +75,11 @@ const LayoutPostsIndexRoute = LayoutPostsIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutNotificationIndexRoute = LayoutNotificationIndexImport.update({
+  path: '/notification/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -114,6 +120,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/notification/': {
+      preLoaderRoute: typeof LayoutNotificationIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/posts/': {
       preLoaderRoute: typeof LayoutPostsIndexImport
       parentRoute: typeof LayoutImport
@@ -129,6 +139,7 @@ export const routeTree = rootRoute.addChildren([
     LayoutItemsRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutNotificationIndexRoute,
     LayoutPostsIndexRoute,
   ]),
   LoginRoute,
