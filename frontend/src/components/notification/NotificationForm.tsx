@@ -1,23 +1,15 @@
 import { useState } from "react";
-import { NotificationPreview } from "@/types/notification";
 import { EyeIcon } from "nui-react-icons";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, Item } from "@/components/ui/select1";
 import { Label } from "@/components/ui/label";
+import { NotificationPreview } from "@/client/models/notification.model";
 
 interface NotificationFormProps {
     onPreview: (preview: NotificationPreview) => void;
 }
-
-const frameworks = [
-    { value: "next", label: "Next.js" },
-    { value: "react", label: "React" },
-    { value: "vue", label: "Vue" },
-    { value: "angular", label: "Angular" },
-    { value: "svelte", label: "Svelte" },
-];
 
 export function NotificationForm({ onPreview }: NotificationFormProps) {
     const [title, setTitle] = useState<string>("");
@@ -65,7 +57,7 @@ export function NotificationForm({ onPreview }: NotificationFormProps) {
                 <div>
                     <Select
                         label="Select Group"
-                        items={frameworks}
+                        items={[]}
                         selectedKey={value}
                         onSelectionChange={(selected) => setValue(selected as string)}
                         className="w-full"

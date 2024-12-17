@@ -1,46 +1,35 @@
 import { NotificationTemplatePublic } from "@/client/models/notification.model";
-import { NotificationTemplate } from "@/types/notification";
 import { Button } from "@/components/ui/button";
 import { Pencil, Plus, Trash } from "nui-react-icons";
 import AddTemplate from "@/components/notification/AddTemplate";
+import EditTemplate from "@/components/notification/EditTemplate";
 import { useState } from "react";
+import { useOverlayTriggerState } from "react-stately";
+import { NotificationsService } from "@/client/services/notification.service";
+import { Modal } from "../modal";
+import { Confirm } from "../confirm";
 
 interface TemplateSelectorProps {
     templates: Array<NotificationTemplatePublic> | undefined;
     onSelect: (template: NotificationTemplatePublic) => void;
 }
 
-const defaultTemplates: NotificationTemplate[] = [
-    {
-        id: "1",
-        name: "Welcome Message",
-        title: "Welcome to Our Platform! 👋",
-        body: `Thank you for joining us. We're excited to have you here!`,
-        icon: "🎉",
-    },
-    {
-        id: "2",
-        name: "New Feature Alert",
-        title: "New Feature Available ✨",
-        body: "Check out our latest feature that just launched!",
-        icon: "🚀",
-    },
-    {
-        id: "3",
-        name: "Reminder",
-        title: "Don't forget! ⏰",
-        body: "You have pending tasks waiting for your attention.",
-        icon: "📝",
-    },
-];
-
 export function TemplateSelector({ templates, onSelect }: TemplateSelectorProps) {
     const [addTemplate, setAddTemplate] = useState<boolean>(false);
-    const handleAdd = () => {};
+    const [id, setId] = useState<string>("");
+    const [template, setTemplate] = useState<any>(null);
+    const confirmationModal = useOverlayTriggerState({});
+    const slideOverState = useOverlayTriggerState({});
 
-    const handleDelete = () => {};
+    const handleDelete = (id: string) => {
+        setId(id);
+        confirmationModal.open();
+    };
 
-    const handleEdit = () => {};
+    const handleEdit = (template: any) => {
+        setTemplate(template);
+        slideOverState.open();
+    };
 
     return (
         <>
@@ -64,10 +53,10 @@ export function TemplateSelector({ templates, onSelect }: TemplateSelectorProps)
                                 <p className="mt-1 text-sm text-default-500">{template.excerpt}</p>
                             </div>
                             <div className="flex flex-row-reverse mt-4 gap-2 w-full">
-                                <Button color="danger" onClick={handleDelete} className="min-w-0">
+                                <Button color="danger" onClick={() => handleDelete(template.id as string)} className="min-w-0">
                                     <Trash />
                                 </Button>
-                                <Button color="secondary" onClick={handleEdit} className="min-w-0">
+                                <Button color="secondary" onClick={() => handleEdit(template)} className="min-w-0">
                                     <Pencil />
                                 </Button>
                             </div>
@@ -76,6 +65,23 @@ export function TemplateSelector({ templates, onSelect }: TemplateSelectorProps)
                 </div>
             </div>
             <AddTemplate isOpen={addTemplate} onClose={() => setAddTemplate(false)} />
+            {slideOverState.isOpen && (
+                <Modal onClose={slideOverState.close}>
+                    <EditTemplate template={template} onClose={slideOverState.close} />
+                </Modal>
+            )}
+
+            {confirmationModal.isOpen && (
+                <Modal onClose={confirmationModal.close}>
+                    <Confirm
+                        title="Delete template?"
+                        content="Are you sure you want to delete this template? This action cannot be undone."
+                        onClose={confirmationModal.close}
+                        queryKey="templates"
+                        onConfirm={NotificationsService.deleteTemplate({ id: id })}
+                    />
+                </Modal>
+            )}
         </>
     );
 }

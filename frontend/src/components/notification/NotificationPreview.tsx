@@ -1,4 +1,4 @@
-import { NotificationPreview as NotificationPreviewType } from "@/types/notification";
+import { NotificationPreview as NotificationPreviewType } from "@/client/models/notification.model";
 import { Bell, Send } from "nui-react-icons";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,8 +29,6 @@ export function NotificationPreview({ notification }: NotificationPreviewProps) 
         },
     });
     const handleSend = () => {
-        // In a real application, this would send the notification to users
-        console.log("notification", notification);
         mutation.mutate({
             title: `${notification.icon} ${notification.title}`,
             body: notification.body,

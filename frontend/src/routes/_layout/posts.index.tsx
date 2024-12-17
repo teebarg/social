@@ -47,9 +47,8 @@ function PostIndex() {
     });
 
     const hasNextPage = !isPlaceholderData && items?.data.length === PER_PAGE;
-    const hasPreviousPage = page > 1;
+    // const hasPreviousPage = page > 1;
 
-    console.log(items);
 
     useEffect(() => {
         if (hasNextPage) {
@@ -71,7 +70,6 @@ function PostIndex() {
                             <CreatePost />
                             <Dashboard
                                 posts={items}
-                                publishPost={() => console.log("yooooo")}
                                 page={page}
                                 setPage={setPage}
                                 hasNextPage={hasNextPage}

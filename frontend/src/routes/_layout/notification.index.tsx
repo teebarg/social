@@ -3,7 +3,7 @@ import { Bell } from "nui-react-icons";
 import { NotificationForm } from "@/components/notification/NotificationForm";
 import { NotificationPreview } from "@/components/notification/NotificationPreview";
 import { TemplateSelector } from "@/components/notification/TemplateSelector";
-import { NotificationPreview as NotificationPreviewType } from "@/types/notification";
+import { NotificationPreview as NotificationPreviewType } from "@/client/models/notification.model";
 import { useState } from "react";
 import { NotificationsService } from "@/client/services/notification.service";
 import { useQuery } from "@tanstack/react-query";

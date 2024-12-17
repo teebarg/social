@@ -103,17 +103,32 @@ def update_create_notification_template(
     item = db.get(NotificationTemplate, id)
     if not item:
         raise HTTPException(status_code=404, detail="Template not found")
-    
+
     # Check if the updated title already exists in another template
     if item_in.title and db.query(NotificationTemplate).filter(NotificationTemplate.title == item_in.title, NotificationTemplate.id != id).first():
         raise HTTPException(status_code=422, detail="Title already exists in another template.")
-    
+
     update_dict = item_in.model_dump(exclude_unset=True)
     item.sqlmodel_update(update_dict)
     db.add(item)
     db.commit()
     db.refresh(item)
     return item
+
+
+@router.delete("/templates/{id}")
+def delete_template(
+    db: SessionDep, id: uuid.UUID
+) -> Message:
+    """
+    Delete an template.
+    """
+    item = db.get(NotificationTemplate, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Template not found")
+    db.delete(item)
+    db.commit()
+    return Message(message="Template deleted successfully")
 
 
 @router.post("/subscription")

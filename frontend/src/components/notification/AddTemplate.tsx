@@ -24,11 +24,11 @@ interface Form extends NotificationTemplateCreate {}
 const AddTemplate = ({ isOpen, onClose }: AddTemplateProps) => {
     const queryClient = useQueryClient();
     const showToast = useCustomToast();
+
     const {
         register,
         handleSubmit,
         reset,
-        getValues,
         formState: { errors, isDirty },
     } = useForm<Form>({
         mode: "onBlur",

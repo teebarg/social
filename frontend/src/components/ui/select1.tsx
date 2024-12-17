@@ -14,8 +14,7 @@ interface Props extends AriaSelectProps<any> {
     className: string;
 }
 
-export function Select(props: Props) {
-    // export const Select: React.FC<Props> = (props) => {
+export const Select: React.FC<Props> = (props) => {
     // Create state based on the incoming props
     let state = useSelectState(props);
 

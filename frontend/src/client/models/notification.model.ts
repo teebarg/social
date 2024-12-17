@@ -5,6 +5,12 @@ export type NotificationCreate = {
     users?: number[];
 };
 
+export interface NotificationPreview {
+    title: string;
+    body: string;
+    icon?: string;
+}
+
 export type NotificationPublic = {
     title: string;
     body?: string | null;
@@ -33,7 +39,7 @@ export type NotificationTemplateUpdate = {
 };
 
 export type NotificationTemplatePublic = {
-    id?: string;
+    id: string;
     icon?: string;
     title: string;
     body: string;

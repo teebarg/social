@@ -29,7 +29,7 @@ export type TDataUpdateNotificationTemplate = {
     id: string;
     requestBody: NotificationTemplateUpdate;
 };
-export type TDataDeleteNotification = {
+export type TDataDelete = {
     id: string;
 };
 
@@ -100,7 +100,7 @@ export class NotificationsService {
      * @returns Message Successful Response
      * @throws ApiError
      */
-    public static deleteNotification(data: TDataDeleteNotification): CancelablePromise<Message> {
+    public static deleteNotification(data: TDataDelete): CancelablePromise<Message> {
         const { id } = data;
         return __request(OpenAPI, {
             method: "DELETE",
@@ -148,6 +148,48 @@ export class NotificationsService {
             url: "/api/v1/notifications/templates",
             body: requestBody,
             mediaType: "application/json",
+            errors: {
+                422: "Validation Error",
+            },
+        });
+    }
+
+    /**
+     * Update Notification
+     * Update an notification template.
+     * @returns NotificationTemplatePublic Successful Response
+     * @throws ApiError
+     */
+    public static updateTemplate(data: TDataUpdateNotificationTemplate): CancelablePromise<NotificationTemplatePublic> {
+        const { id, requestBody } = data;
+        return __request(OpenAPI, {
+            method: "PUT",
+            url: "/api/v1/notifications/templates/{id}",
+            path: {
+                id,
+            },
+            body: requestBody,
+            mediaType: "application/json",
+            errors: {
+                422: "Validation Error",
+            },
+        });
+    }
+
+    /**
+     * Delete Template
+     * Delete a template.
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteTemplate(data: TDataDelete): CancelablePromise<Message> {
+        const { id } = data;
+        return __request(OpenAPI, {
+            method: "DELETE",
+            url: "/api/v1/notifications/templates/{id}",
+            path: {
+                id,
+            },
             errors: {
                 422: "Validation Error",
             },
