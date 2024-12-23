@@ -13,10 +13,10 @@ const UserMenu = () => {
   return (
     <>
       {/* Desktop */}
-      <div className="fixed hidden md:block top-4 right-4">
+      <div className="flex items-center">
         <Dropdown
           align="end"
-          trigger={<UserCircleMini viewBox="0 0 24 24" className="h-12 w-12" />}
+          trigger={<UserCircleMini viewBox="0 0 20 20" className="h-10 w-10" />}
         >
           <div>
             <div className="bg-default-100 rounded-lg shadow-md p-3 min-w-[100px] text-sm font-medium">

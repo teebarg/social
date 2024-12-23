@@ -55,9 +55,9 @@ function SendNotification() {
                             <div className="px-4 py-8 sm:px-0">
                                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                                     <div className="space-y-8 col-span-2">
-                                        <div className="bg-white overflow-hidden shadow rounded-lg">
+                                        <div className="bg-content1 overflow-hidden shadow rounded-lg">
                                             <div className="px-4 py-5 sm:p-6">
-                                                <h2 className="text-lg font-medium text-gray-900 mb-4">Compose Notification</h2>
+                                                <h2 className="text-lg font-medium text-default-900 mb-4">Compose Notification</h2>
                                                 <NotificationForm onPreview={setPreview} />
                                             </div>
                                         </div>

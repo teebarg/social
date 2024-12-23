@@ -26,8 +26,8 @@ function UserSettings() {
 
     return (
         <div className="py-2 px-8">
-            <h2 className="lg text-center md:text-left py-4">User Settings</h2>
-            <Tab defaultTab={0}>
+            <h2 className="text-center md:text-left py-4">User Settings</h2>
+            <Tab defaultTab={0} className="mx-0">
                 <Tab.Header>
                     {finalTabs.map((tab, index) => (
                         <Tab.HeaderItem key={index} index={index}>
