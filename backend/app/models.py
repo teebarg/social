@@ -1,8 +1,16 @@
+import secrets
 import uuid
 from datetime import datetime
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+
+
+class Social(SQLModel):
+    email: str
+    firstname: str
+    lastname: str
+    password: str = secrets.token_urlsafe(6)
 
 
 # Shared properties
@@ -154,7 +162,7 @@ class DraftBase(SQLModel):
     image_url: str | None = Field(default=None, max_length=255)
     link_url: str | None = Field(default=None, max_length=255)
     platform: str | None = Field(default=None, max_length=100)
-    scheduled_time: datetime| None = None
+    scheduled_time: datetime | None = None
     is_published: bool = Field(default=False)
     created_at: datetime | None = Field(default=datetime.now())
     updated_at: datetime | None = Field(default=datetime.now())
@@ -192,12 +200,14 @@ class DraftsPublic(SQLModel):
     data: list[DraftPublic]
     count: int
 
+
 class PushSubscriptionBase(SQLModel):
     endpoint: str = Field(min_length=1, max_length=255, unique=True, index=True)
     p256dh: str = Field(min_length=1, max_length=255)
     auth: str = Field(min_length=1, max_length=255)
     group: str | None = Field(default=None, max_length=255)
     created_at: datetime | None = Field(default=datetime.now())
+
 
 class PushSubscription(PushSubscriptionBase, table=True):
     __tablename__ = "push_subscriptions"

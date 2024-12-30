@@ -10,7 +10,7 @@ from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
 from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
-from app.models import Message, NewPassword, Token, UserPublic
+from app.models import Message, NewPassword, Social, Token, UserCreate, UserPublic
 from app.utils import (
     generate_password_reset_token,
     generate_reset_password_email,
@@ -19,6 +19,23 @@ from app.utils import (
 )
 
 router = APIRouter()
+
+
+@router.post("/login/social")
+async def social(credentials: Social, session: SessionDep) -> Token:
+    """
+    Return a new token for current user
+    """
+    user = crud.get_user_by_email(session=session, email=credentials.email)
+    if not user:
+        user_create = UserCreate.model_validate(credentials)
+        user = crud.create_user(session=session, user_create=user_create)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    return Token(
+        access_token=security.create_access_token(
+            user.id, expires_delta=access_token_expires
+        )
+    )
 
 
 @router.post("/login/access-token")

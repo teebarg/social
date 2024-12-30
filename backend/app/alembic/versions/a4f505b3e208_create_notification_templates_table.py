@@ -5,6 +5,7 @@ Revises: 656c3b1b4a98
 Create Date: 2024-12-15 16:12:24.704694
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel.sql.sqltypes
@@ -13,8 +14,8 @@ from datetime import datetime
 
 
 # revision identifiers, used by Alembic.
-revision = 'a4f505b3e208'
-down_revision = '656c3b1b4a98'
+revision = "a4f505b3e208"
+down_revision = "656c3b1b4a98"
 branch_labels = None
 depends_on = None
 

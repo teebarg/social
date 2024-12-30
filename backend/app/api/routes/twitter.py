@@ -26,7 +26,7 @@ class TweetRequest(BaseModel):
 
 
 @router.post("/")
-async def post_tweet(db: SessionDep,  current_user: CurrentUser, tweet: TweetRequest):
+async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequest):
     """
     Endpoint to post a tweet to Twitter with validation, retries, and database logging.
 
@@ -42,9 +42,9 @@ async def post_tweet(db: SessionDep,  current_user: CurrentUser, tweet: TweetReq
         raise HTTPException(status_code=404, detail="Draft not found")
     if not current_user.is_superuser and (draft.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    
+
     content = draft.content
-    
+
     # Validate content length
     if len(content) > 280:
         return {
@@ -80,7 +80,9 @@ async def post_tweet(db: SessionDep,  current_user: CurrentUser, tweet: TweetReq
                 db.commit()
 
                 # set is_published
-                draft.sqlmodel_update({"is_published": True, "updated_at": datetime.now()})
+                draft.sqlmodel_update(
+                    {"is_published": True, "updated_at": datetime.now()}
+                )
                 db.add(draft)
                 db.commit()
 

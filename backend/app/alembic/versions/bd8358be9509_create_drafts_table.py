@@ -24,7 +24,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "drafts",
-         sa.Column(
+        sa.Column(
             "id",
             postgresql.UUID(as_uuid=True),
             default=sa.text("uuid_generate_v4()"),
@@ -38,10 +38,7 @@ def upgrade():
         sa.Column("scheduled_time", sa.DateTime(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.Column(
-            "user_id",
-            postgresql.UUID(as_uuid=True),nullable=False
-        ),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["user.id"],

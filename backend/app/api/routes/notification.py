@@ -1,11 +1,15 @@
 import json
 import uuid
-from app.models import Message, NotificationTemplate, NotificationTemplateCreate, NotificationTemplatePublic, NotificationTemplateUpdate, NotificationTemplatesPublic, PushSubscription
-from fastapi import (
-    APIRouter,
-    HTTPException,
-    BackgroundTasks
+from app.models import (
+    Message,
+    NotificationTemplate,
+    NotificationTemplateCreate,
+    NotificationTemplatePublic,
+    NotificationTemplateUpdate,
+    NotificationTemplatesPublic,
+    PushSubscription,
 )
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 
 
@@ -17,7 +21,7 @@ from pywebpush import webpush, WebPushException
 
 from app.api.deps import SessionDep
 from app.core.config import settings
-from sqlmodel import  select
+from sqlmodel import select
 import psycopg2
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
@@ -37,8 +41,10 @@ class PushSubscriptionRequest(BaseModel):
     keys: dict
     group: Optional[str] = None  # Optional group for the subscription
 
+
 class PushSubscriptionSearch(BaseModel):
     endpoint: str
+
 
 class NotificationRequest(BaseModel):
     title: str
@@ -46,11 +52,13 @@ class NotificationRequest(BaseModel):
     group: Optional[str] = None  # Target group
     users: Optional[List[int]] = None  # Specific user IDs to target
 
+
 class NotificationTemplateRequest(BaseModel):
     title: str
     body: str
     icon: Optional[str] = None
     exert: Optional[str] = None
+
 
 class NotificationTemplateSearch(BaseModel):
     title: str
@@ -105,8 +113,17 @@ def update_create_notification_template(
         raise HTTPException(status_code=404, detail="Template not found")
 
     # Check if the updated title already exists in another template
-    if item_in.title and db.query(NotificationTemplate).filter(NotificationTemplate.title == item_in.title, NotificationTemplate.id != id).first():
-        raise HTTPException(status_code=422, detail="Title already exists in another template.")
+    if (
+        item_in.title
+        and db.query(NotificationTemplate)
+        .filter(
+            NotificationTemplate.title == item_in.title, NotificationTemplate.id != id
+        )
+        .first()
+    ):
+        raise HTTPException(
+            status_code=422, detail="Title already exists in another template."
+        )
 
     update_dict = item_in.model_dump(exclude_unset=True)
     item.sqlmodel_update(update_dict)
@@ -117,9 +134,7 @@ def update_create_notification_template(
 
 
 @router.delete("/templates/{id}")
-def delete_template(
-    db: SessionDep, id: uuid.UUID
-) -> Message:
+def delete_template(db: SessionDep, id: uuid.UUID) -> Message:
     """
     Delete an template.
     """
@@ -143,7 +158,9 @@ def get_subscription_by_endpoint(db: SessionDep, data: PushSubscriptionSearch):
 @router.post("/subscribe")
 async def subscribe(subscription: PushSubscriptionRequest, db: SessionDep):
     """Save a push subscription."""
-    existing_subscription = db.query(PushSubscription).filter_by(endpoint=subscription.endpoint).first()
+    existing_subscription = (
+        db.query(PushSubscription).filter_by(endpoint=subscription.endpoint).first()
+    )
 
     if existing_subscription:
         raise HTTPException(status_code=422, detail="Subscription already exists.")
@@ -160,9 +177,7 @@ async def subscribe(subscription: PushSubscriptionRequest, db: SessionDep):
 
 
 @router.delete("/{id}")
-def unsubscribe(
-    db: SessionDep, id: str
-) -> Message:
+def unsubscribe(db: SessionDep, id: str) -> Message:
     """
     Delete a push subscription.
     """
@@ -176,26 +191,41 @@ def unsubscribe(
 
 
 @router.post("/")
-async def send_notification(notification: NotificationRequest, db: SessionDep, background_tasks: BackgroundTasks):
+async def send_notification(
+    notification: NotificationRequest, db: SessionDep, background_tasks: BackgroundTasks
+):
     """Send push notifications to a target group or specific users."""
     if not notification.group and not notification.users:
-        raise HTTPException(status_code=400, detail="Group or user IDs must be specified.")
+        raise HTTPException(
+            status_code=400, detail="Group or user IDs must be specified."
+        )
 
     # Fetch subscriptions based on group or user IDs
     if notification.group:
-        subscriptions = db.query(PushSubscription).filter_by(group=notification.group).all()
+        subscriptions = (
+            db.query(PushSubscription).filter_by(group=notification.group).all()
+        )
     elif notification.users:
-        subscriptions = db.query(PushSubscription).filter(PushSubscription.id.in_(notification.users)).all()
+        subscriptions = (
+            db.query(PushSubscription)
+            .filter(PushSubscription.id.in_(notification.users))
+            .all()
+        )
     else:
         subscriptions = []
 
     if not subscriptions:
-        raise HTTPException(status_code=404, detail="No subscriptions found for the target.")
+        raise HTTPException(
+            status_code=404, detail="No subscriptions found for the target."
+        )
 
     # Add the notification sending task to the background
-    background_tasks.add_task(send_notifications_to_subscribers, subscriptions, notification)
+    background_tasks.add_task(
+        send_notifications_to_subscribers, subscriptions, notification
+    )
 
     return {"message": "Notifications are being sent."}
+
 
 def send_notifications_to_subscribers(subscriptions, notification):
     failed_subscriptions = []
@@ -210,9 +240,15 @@ def send_notifications_to_subscribers(subscriptions, notification):
                         "auth": subscriber.auth,
                     },
                 },
-                data=json.dumps({"title": notification.title, "body": notification.body, "path": "/collections"}),
+                data=json.dumps(
+                    {
+                        "title": notification.title,
+                        "body": notification.body,
+                        "path": "/collections",
+                    }
+                ),
                 vapid_private_key=settings.VAPID_PRIVATE_KEY,
-                vapid_claims=VAPID_CLAIMS
+                vapid_claims=VAPID_CLAIMS,
             )
         except WebPushException as ex:
             failed_subscriptions.append(subscriber.id)

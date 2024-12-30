@@ -1,3 +1,4 @@
+import Google from "@/components/google"
 import { Outlet, createRootRoute } from "@tanstack/react-router"
 import React, { Suspense } from "react"
 
@@ -25,6 +26,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <Outlet />
+      <Google />
       <Suspense>
         <TanStackDevtools />
       </Suspense>
