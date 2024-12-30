@@ -28,7 +28,9 @@ def index(
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Draft)
         count = session.exec(count_statement).one()
-        statement = select(Draft).offset(skip).limit(limit).order_by(Draft.created_at.desc())
+        statement = (
+            select(Draft).offset(skip).limit(limit).order_by(Draft.created_at.desc())
+        )
         drafts = session.exec(statement).all()
     else:
         count_statement = (

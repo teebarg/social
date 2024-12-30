@@ -129,8 +129,8 @@ class Settings(BaseSettings):
     TWITTER_ACCESS_TOKEN: str = ""
     TWITTER_ACCESS_TOKEN_SECRET: str = ""
 
-    VAPID_PUBLIC_KEY: str =""
-    VAPID_PRIVATE_KEY: str =""
+    VAPID_PUBLIC_KEY: str = ""
+    VAPID_PRIVATE_KEY: str = ""
 
 
 settings = Settings()  # type: ignore

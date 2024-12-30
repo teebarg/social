@@ -51,13 +51,13 @@ function Login() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 min-h-screen">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-2 text-center">
+      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-default-50 to-primary-100 p-6 min-h-screen">
+        <div className="max-w-md w-full bg-content1 rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
+          <h2 className="text-3xl font-semibold text-default-800 mb-2 text-center">
             Login
           </h2>
 
-          <p className="text-gray-600 mb-6 text-center">
+          <p className="text-default-600 mb-6 text-center">
             login to start your data journey.
           </p>
 
@@ -108,7 +108,7 @@ function Login() {
               Log In
             </Button>
           </form>
-          <p className="mt-6 text-xs text-gray-500 text-center">
+          <p className="mt-6 text-xs text-default-500 text-center">
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-500">
               Sign up
