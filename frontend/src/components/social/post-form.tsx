@@ -51,8 +51,8 @@ const CreatePost: React.FC<Props> = () => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Create Post</h2>
+        <div className="bg-content1 rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-default-800 mb-4">Create Post</h2>
             <div className="space-y-4">
                 <div>
                     <Label htmlFor="title">Title</Label>
@@ -62,14 +62,14 @@ const CreatePost: React.FC<Props> = () => {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="What's on your mind?"
-                    className="w-full h-32 p-4 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-50 focus:border-transparent resize-none"
+                    className="w-full h-32 p-4 border border-default-200 rounded-lg focus:ring-1 focus:ring-blue-50 focus:border-transparent resize-none"
                 />
 
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => togglePlatform("facebook")}
                         className={`p-2 rounded-full transition-colors ${
-                            selectedPlatforms.includes("facebook") ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"
+                            selectedPlatforms.includes("facebook") ? "bg-blue-100 text-blue-600" : "hover:bg-default-100 text-default-600"
                         }`}
                     >
                         <FacebookIcon className="w-6 h-6" />
@@ -77,7 +77,7 @@ const CreatePost: React.FC<Props> = () => {
                     <button
                         onClick={() => togglePlatform("twitter")}
                         className={`p-2 rounded-full transition-colors ${
-                            selectedPlatforms.includes("twitter") ? "bg-blue-100 text-blue-400" : "hover:bg-gray-100 text-gray-600"
+                            selectedPlatforms.includes("twitter") ? "bg-blue-100 text-blue-400" : "hover:bg-default-100 text-default-600"
                         }`}
                     >
                         <TwitterIcon className="w-6 h-6" />
@@ -86,12 +86,12 @@ const CreatePost: React.FC<Props> = () => {
                         <button
                             onClick={() => setIsScheduling(!isScheduling)}
                             className={`p-2 rounded-full transition-colors ${
-                                isScheduling ? "bg-purple-100 text-purple-600" : "hover:bg-gray-100 text-gray-600"
+                                isScheduling ? "bg-purple-100 text-purple-600" : "hover:bg-default-100 text-default-600"
                             }`}
                         >
                             <Calendar className="w-6 h-6" />
                         </button>
-                        {/* <button className="p-2 hover:bg-gray-100 text-gray-600 rounded-full transition-colors">
+                        {/* <button className="p-2 hover:bg-default-100 text-default-600 rounded-full transition-colors">
                             <ImageIcon className="w-6 h-6" />
                         </button> */}
                     </div>
@@ -99,7 +99,7 @@ const CreatePost: React.FC<Props> = () => {
 
                 {isScheduling && (
                     <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">Schedule for:</span>
+                        <span className="text-sm text-default-600">Schedule for:</span>
                         <DateTimePicker value={scheduledFor} onChange={setScheduledFor} minDate={new Date()} />
                     </div>
                 )}

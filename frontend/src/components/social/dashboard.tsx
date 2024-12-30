@@ -61,23 +61,23 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
     return (
         <div className="py-6 space-y-6 relative">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-800">Total Posts</h3>
+                <div className="bg-content1 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-default-800">Total Posts</h3>
                     <p className="text-3xl font-bold text-blue-600 mt-2">{posts?.count}</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-800">Published</h3>
+                <div className="bg-content1 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-default-800">Published</h3>
                     <p className="text-3xl font-bold text-green-600 mt-2">{posts?.data.filter((post: DraftPublic) => post.is_published).length}</p>
                 </div>
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-800">Drafts & Scheduled</h3>
+                <div className="bg-content1 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-default-800">Drafts & Scheduled</h3>
                     <p className="text-3xl font-bold text-orange-600 mt-2">{posts?.data.filter((post: DraftPublic) => !post.is_published).length}</p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-2">
+            <div className="bg-content1 rounded-xl shadow-sm p-2">
                 <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-800">Recent Posts</h2>
+                    <h2 className="text-xl font-semibold text-default-800">Recent Posts</h2>
                 </div>
                 <Table>
                     <THead>
@@ -108,11 +108,11 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                                     <TD className="truncate max-w-40">
                                         <div className="space-y-2">
                                             <p className="text-default-800">{post.content}</p>
-                                            <div className="text-sm text-gray-500">
+                                            <div className="text-sm text-default-500">
                                                 {post.created_at && <span>{format(new Date(post.created_at as string), "MMM d, yyyy h:mm a")}</span>}
                                             </div>
                                             {post.scheduled_time && (
-                                                <div className="flex items-center gap-2 text-sm text-gray-500">
+                                                <div className="flex items-center gap-2 text-sm text-default-500">
                                                     <Calendar className="w-4 h-4" />
                                                     <span>Scheduled for: {format(new Date(post.scheduled_time), "MMM d, yyyy h:mm a")}</span>
                                                 </div>
@@ -125,7 +125,7 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                                                 <>
                                                     <Publish id={post.id as string} />
                                                     <button
-                                                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                                                        className="p-2 text-default-600 hover:bg-default-100 rounded-full transition-colors"
                                                         onClick={() => handleEdit(post)}
                                                     >
                                                         <EditIcon className="w-5 h-5" />

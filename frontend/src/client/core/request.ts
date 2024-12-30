@@ -328,7 +328,11 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions, ax
 
                 resolve(result.body);
             }
-        } catch (error) {
+        } catch (error: any) {
+            if ([401, 403].includes(error.status)) {
+                localStorage.removeItem("access_token");
+                window.location.href = "/login";
+            }
             reject(error);
         }
     });

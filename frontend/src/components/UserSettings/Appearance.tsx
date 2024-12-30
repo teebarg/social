@@ -1,5 +1,5 @@
 import { Check, MoonFilledIcon, SunFilledIcon } from "nui-react-icons";
-import { useEffect, useState } from "react";
+import { Theme, useTheme } from "@/context/theme-provider";
 
 // Define theme types
 const themes = [
@@ -24,30 +24,10 @@ const themes = [
 ];
 
 const Appearance = () => {
-    const [selectedTheme, setSelectedTheme] = useState<string>(() => {
-        return localStorage.getItem("theme") || "system";
-    });
-
-    // Handle theme changes
-    useEffect(() => {
-        const applyTheme = () => {
-            const isDark = selectedTheme === "dark" || (selectedTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-            if (isDark) {
-                document.documentElement.classList.add("dark");
-            } else {
-                document.documentElement.classList.remove("dark");
-            }
-
-            // Save theme preference
-            localStorage.setItem("theme", selectedTheme);
-        };
-
-        applyTheme();
-    }, [selectedTheme]);
+    const { theme, setTheme } = useTheme();
 
     const handleThemeChange = (themeId: string) => {
-        setSelectedTheme(themeId);
+        setTheme(themeId as Theme)
     };
 
     return (
@@ -56,24 +36,24 @@ const Appearance = () => {
             <p className="text-center text-default-600 mb-6">Select how you want your interface to look</p>
 
             <div className="space-y-4">
-                {themes.map((theme) => (
+                {themes.map((item) => (
                     <div
-                        key={theme.id}
-                        onClick={() => handleThemeChange(theme.id)}
+                        key={item.id}
+                        onClick={() => handleThemeChange(item.id)}
                         className={`
                               cursor-pointer flex items-center justify-between 
                               p-4 rounded-lg border-2 transition-all duration-300
-                              ${selectedTheme === theme.id ? "border-primary-200" : "border-default-100 hover:border-primary-300"}
+                              ${theme === item.id ? "border-primary-200" : "border-default-100 hover:border-primary-300"}
                           `}
                     >
                         <div className="flex items-center space-x-4">
-                            {theme.icon}
+                            {item.icon}
                             <div>
-                                <h3 className="font-semibold text-default-700">{theme.name}</h3>
-                                <p className="text-sm text-default-500">{theme.description}</p>
+                                <h3 className="font-semibold text-default-700">{item.name}</h3>
+                                <p className="text-sm text-default-500">{item.description}</p>
                             </div>
                         </div>
-                        {selectedTheme === theme.id && <Check className="text-primary-500 w-6 h-6" />}
+                        {theme === item.id && <Check className="text-primary-500 w-6 h-6" />}
                     </div>
                 ))}
             </div>
