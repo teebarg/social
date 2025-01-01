@@ -3,9 +3,8 @@
 
 .EXPORT_ALL_VARIABLES:
 
-PROJECT_SLUG := "botcommerce"
+PROJECT_SLUG := "social"
 APP_NAME := $(PROJECT_SLUG)-backend
-PRECOMMIT_CONFIG_PATH = "./dev_config/python/.pre-commit-config.yaml"
 DOCKER_HUB := beafdocker
 
 # Help target
@@ -60,7 +59,7 @@ test-frontend: ## Run frontend tests
 
 test-backend: ## Run backend tests
 	@echo "$(YELLOW)Running backend tests...$(RESET)"
-	docker exec botcommerce-backend ./test.sh
+	docker exec social-backend ./test.sh
 
 test: ## Run project tests
 	@$(MAKE) -s test-frontend
@@ -72,7 +71,7 @@ prep: ## Prepare postges database
 
 prep-docker: ## Prepare postges database
 	@echo "$(YELLOW)Preparing docker database...$(RESET)"
-	docker exec botcommerce-backend ./scripts/prestart.sh
+	docker exec social-backend ./scripts/prestart.sh
 
 serve-backend: ## Serve the backend in terminal
 	@cd backend; fastapi dev app/main.py
@@ -81,7 +80,7 @@ serve-frontend: ## Serve the frontend in terminal
 	@cd frontend; npm run dev
 
 dev: ## Serve the project in terminal
-	@echo "$(YELLOW)Running development in terminal...$(RESET)"	
+	@echo "$(YELLOW)Running development in terminal...$(RESET)"
 	make -j 2 serve-backend serve-frontend
 
 
@@ -106,8 +105,8 @@ pre-commit:
 pre-commit-docker:
 	npx concurrently --kill-others-on-fail --prefix "[{name}]" --names "frontend:lint,frontend:test,frontend:build,backend:lint,backend:test" \
 	--prefix-colors "bgRed.bold.white,bgGreen.bold.white,bgBlue.bold.white,bgMagenta.bold.white" \
-    "docker exec botcommerce-frontend-1 npm run lint:check" \
-    "docker exec botcommerce-frontend-1 npm run test:unit" \
-    "docker exec botcommerce-frontend-1 npm run build" \
-	"docker exec botcommerce-backend-1 make format" \
-	"docker exec botcommerce-backend-1 make test"
+    "docker exec social-frontend-1 npm run lint:check" \
+    "docker exec social-frontend-1 npm run test:unit" \
+    "docker exec social-frontend-1 npm run build" \
+	"docker exec social-backend-1 make format" \
+	"docker exec social-backend-1 make test"
