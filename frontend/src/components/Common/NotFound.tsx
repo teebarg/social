@@ -1,27 +1,21 @@
-import { Link } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router";
+import { ExclamationIcon } from "nui-react-icons";
 
 const NotFound = () => {
-  return (
-    <>
-      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 min-h-screen">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-105 duration-300">
-          <h2 className="text-6xl font-semibold text-gray-800 mb-4 text-center">
-            404
-          </h2>
-          <p className="text-gray-600 text-center text-xl">Oops!</p>
-          <p className="text-gray-600 mb-6 text-center text-xl">
-            Page not found.
-          </p>
-          <Link
-            to="/"
-            className="mt-4 text-center w-full bg-secondary text-secondary-foreground block py-2 rounded-md"
-          >
-            Go back
-          </Link>
-        </div>
-      </div>
-    </>
-  )
-}
+    return (
+        <>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-content1">
+                <div className="max-w-md mx-auto text-center">
+                    <ExclamationIcon className="w-20 h-20 mx-auto text-danger" />
+                    <h1 className="text-3xl font-bold mt-6">Oops! Page Not Found</h1>
+                    <p className="text-default-500 mt-4">{`The page you're looking for doesn't exist or has been moved.`}</p>
+                    <Link className="bg-primary text-white font-semibold py-2 px-4 rounded mt-6 inline-block" to="/">
+                        Go to Home
+                    </Link>
+                </div>
+            </div>
+        </>
+    );
+};
 
-export default NotFound
+export default NotFound;
