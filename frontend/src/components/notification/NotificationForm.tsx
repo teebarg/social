@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Item, Select } from "@/components/ui/select1"
 import { Textarea } from "@/components/ui/textarea"
-import { EyeIcon } from "nui-react-icons"
+import { Eye } from "nui-react-icons"
 import { useState } from "react"
 
 interface NotificationFormProps {
@@ -82,7 +82,7 @@ export function NotificationForm({ onPreview }: NotificationFormProps) {
           className="min-w-24"
           color="primary"
           onClick={handlePreview}
-          startContent={<EyeIcon className="h-4 w-4" />}
+          startContent={<Eye className="h-4 w-4" />}
         >
           Preview
         </Button>

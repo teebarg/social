@@ -4,7 +4,7 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FormControl } from "@/components/ui/label"
-import { EyeFilledIcon, EyeSlashFilledIcon } from "nui-react-icons"
+import { EyeFilled, EyeSlashFilled } from "nui-react-icons"
 import { useState } from "react"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
@@ -92,9 +92,9 @@ function Login() {
                     aria-label={show ? "Hide password" : "Show password"}
                   >
                     {show ? (
-                      <EyeSlashFilledIcon className="h-6 w-6" />
+                      <EyeSlashFilled className="h-6 w-6" />
                     ) : (
-                      <EyeFilledIcon className="h-6 w-6" />
+                      <EyeFilled className="h-6 w-6" />
                     )}
                   </button>
                 }

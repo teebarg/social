@@ -6,7 +6,7 @@ import {
   Bell,
   ChevronRight,
   CogSixTooth,
-  HomeIcon,
+  Home,
   Users,
   Window,
 } from "nui-react-icons"
@@ -207,7 +207,7 @@ const Sidebar: React.FC = () => {
         {
           label: "Dashboard",
           href: "/",
-          icon: <HomeIcon size={18} />,
+          icon: <Home size={18} />,
         },
         {
           label: "Settings",
@@ -233,7 +233,7 @@ const Sidebar: React.FC = () => {
         {
           label: "Posts",
           href: "/posts",
-          icon: <HomeIcon size={18} />,
+          icon: <Home size={18} />,
         },
       ],
     },
