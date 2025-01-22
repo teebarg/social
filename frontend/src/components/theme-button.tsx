@@ -1,5 +1,5 @@
 import { useTheme } from "@/context/theme-provider"
-import { MoonFilledIcon, SunFilledIcon } from "nui-react-icons"
+import { MoonFilled, SunFilled } from "nui-react-icons"
 import React from "react"
 
 type Props = {}
@@ -8,9 +8,9 @@ const ThemeToggle: React.FC<Props> = () => {
   const { theme, toggleTheme } = useTheme()
   const icon =
     theme === "dark" ? (
-      <SunFilledIcon className="h-6 w-6" />
+      <SunFilled className="h-6 w-6" />
     ) : (
-      <MoonFilledIcon className="h-6 w-6" />
+      <MoonFilled className="h-6 w-6" />
     )
 
   const handleToggle = (event: React.MouseEvent) => {

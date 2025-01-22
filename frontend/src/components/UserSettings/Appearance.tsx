@@ -1,18 +1,18 @@
 import { type Theme, useTheme } from "@/context/theme-provider"
-import { Check, MoonFilledIcon, SunFilledIcon } from "nui-react-icons"
+import { Check, MoonFilled, SunFilled } from "nui-react-icons"
 
 // Define theme types
 const themes = [
   {
     id: "light",
     name: "Light Mode",
-    icon: <SunFilledIcon className="w-6 h-6 text-yellow-500" />,
+    icon: <SunFilled className="w-6 h-6 text-yellow-500" />,
     description: "Bright and clean interface",
   },
   {
     id: "dark",
     name: "Dark Mode",
-    icon: <MoonFilledIcon className="w-6 h-6 text-indigo-400" />,
+    icon: <MoonFilled className="w-6 h-6 text-indigo-400" />,
     description: "Easy on the eyes, perfect for night",
   },
   // {
