@@ -1,6 +1,6 @@
-import { cn } from "@/lib/util/cn";
 import { CheckCircleSolid, InformationCircleSolid, Shield } from "nui-react-icons";
 import React from "react";
+import { cn } from "../../utils";
 
 interface Props {
     title: string;
@@ -58,7 +58,7 @@ const Alert: React.FC<Props> = ({ title, color = "primary", variant = "solid" })
                 <div
                     role="alert"
                     title={title}
-                    className={cn("flex flex-grow flex-row w-full py-3 px-4 gap-x-1 rounded-medium items-start", colorCss[color].outer)}
+                    className={cn("flex flex-grow flex-row w-full py-3 px-4 gap-x-1 rounded-xl items-start", colorCss[color].outer)}
                 >
                     <div
                         className={cn("flex-none relative w-9 h-9 rounded-full grid place-items-center shadow-small border-1", colorCss[color].inner)}
@@ -66,7 +66,7 @@ const Alert: React.FC<Props> = ({ title, color = "primary", variant = "solid" })
                         {colorCss[color].icon}
                     </div>
                     <div className="h-full flex-grow min-h-10 ms-2 flex flex-col box-border text-inherit justify-center items-center">
-                        <div className="text-small w-full font-medium block text-inherit leading-5">{title}</div>
+                        <div className="text-sm w-full font-medium block text-inherit leading-5">{title}</div>
                     </div>
                 </div>
             </div>

@@ -89,7 +89,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <div
             className={cn(
               "relative w-full inline-flex tap-highlight-transparent shadow-sm px-3 bg-default-100 data-[hover=true]:bg-default-100 group-data-[focus=true]:bg-default-100",
-              "min-h-10 rounded-medium flex-col items-start justify-center gap-0 !h-auto transition-background motion-reduce:transition-none !duration-150 outline-none",
+              "min-h-10 rounded-xl flex-col items-start justify-center gap-0 !h-auto transition-background motion-reduce:transition-none !duration-150 outline-none",
               "group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2",
               "group-data-[focus-visible=true]:ring-offset-background py-2",
               classNames?.inputWrapper,
@@ -102,7 +102,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               className={cn(
                 "z-10 pointer-events-none origin-top-left rtl:origin-top-right subpixel-antialiased block text-foreground-500 cursor-text relative will-change-auto",
                 "!duration-200 !ease-out motion-reduce:transition-none transition-[transform,color,left,opacity] group-data-[filled-within=true]:text-default-500",
-                "group-data-[filled-within=true]:pointer-events-auto group-data-[filled-within=true]:scale-85 text-small pb-0.5 pe-2 max-w-full text-ellipsis overflow-hidden",
+                "group-data-[filled-within=true]:pointer-events-auto group-data-[filled-within=true]:scale-85 text-sm pb-0.5 pe-2 max-w-full text-ellipsis overflow-hidden",
                 classNames?.label,
               )}
               data-slot="label"
@@ -120,7 +120,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 ref={textAreaRef}
                 className={cn(
                   "w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5",
-                  "data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small resize-none",
+                  "data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-sm resize-none",
                   "data-[hide-scroll=true]:scrollbar-hide group-data-[has-value=true]:text-default-foreground pt-0 transition-height !duration-100 motion-reduce:transition-none",
                   classNames?.input,
                 )}
@@ -145,7 +145,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {description && (
               <div
                 className={cn(
-                  "text-tiny text-foreground-400",
+                  "text-xs text-foreground-400",
                   classNames?.description,
                 )}
                 data-slot="description"
@@ -154,7 +154,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               </div>
             )}
             {error && (
-              <div className="text-tiny text-danger" data-slot="error-message">
+              <div className="text-xs text-danger" data-slot="error-message">
                 {error}
               </div>
             )}

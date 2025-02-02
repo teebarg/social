@@ -121,3 +121,21 @@ def verify_password_reset_token(token: str) -> str | None:
         return str(decoded_token["sub"])
     except InvalidTokenError:
         return None
+
+
+def generate_title(content, max_words=6):
+    # Clean and split the content into words
+    words = content.strip().split()
+
+    # Remove common punctuation from words
+    words = [word.strip('.,!?():;').lower() for word in words]
+
+    # Skip common words that shouldn't be in titles
+    skip_words = {'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'}
+    important_words = [word for word in words if word not in skip_words and len(word) > 2]
+
+    # Take first few important words and capitalize them
+    title_words = important_words[:max_words]
+    title = ' '.join(word.capitalize() for word in title_words)
+
+    return title

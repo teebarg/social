@@ -3,8 +3,6 @@
 @tailwind utilities;
 
 html {
-    /* background-color: #fbf6ea; */
-    /* color: #40017f; */
     margin: 0;
     width: 100%;
 }
@@ -39,8 +37,6 @@ body {
         --foreground: 201.81999999999994 24.44% 8.82%;
         --divider: 0 0% 6.67%;
         --divider-opacity: 0.15;
-        --focus: 212.01999999999998 100% 46.67%;
-        --overlay: 0 0% 0%;
         --content1: 0 0% 100%;
         --content1-foreground: 201.81999999999994 24.44% 8.82%;
         --content2: 240 4.76% 95.88%;
@@ -121,22 +117,6 @@ body {
         --danger-900: 340 84.91% 10.39%;
         --danger-foreground: 0 0% 100%;
         --danger: 339.20000000000005 90.36% 51.18%;
-        --divider-weight: 1px;
-        --disabled-opacity: 0.5;
-        --font-size-tiny: 0.75rem;
-        --font-size-small: 0.875rem;
-        --font-size-medium: 1rem;
-        --font-size-large: 1.125rem;
-        --line-height-tiny: 1rem;
-        --line-height-small: 1.25rem;
-        --line-height-medium: 1.5rem;
-        --line-height-large: 1.75rem;
-        --radius-small: 8px;
-        --radius-medium: 12px;
-        --radius-large: 14px;
-        --border-width-small: 1px;
-        --border-width-medium: 2px;
-        --border-width-large: 3px;
         --box-shadow-small: 0px 0px 5px 0px rgb(0 0 0 / 0.02), 0px 2px 10px 0px rgb(0 0 0 / 0.06), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
         --box-shadow-medium: 0px 0px 15px 0px rgb(0 0 0 / 0.03), 0px 2px 30px 0px rgb(0 0 0 / 0.08), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
         --box-shadow-large: 0px 0px 30px 0px rgb(0 0 0 / 0.04), 0px 30px 60px 0px rgb(0 0 0 / 0.12), 0px 0px 1px 0px rgb(0 0 0 / 0.3);
@@ -160,8 +140,6 @@ body {
         --foreground-800: 240 4.76% 95.88%;
         --foreground-900: 0 0% 98.04%;
         --foreground: 210 5.56% 92.94%;
-        --focus: 212.01999999999998 100% 46.67%;
-        --overlay: 0 0% 0%;
         --divider: 0 0% 100%;
         --divider-opacity: 0.15;
         --content1: 240 5.88% 10%;
@@ -244,22 +222,6 @@ body {
         --danger-900: 339.13 92% 95.1%;
         --danger-foreground: 0 0% 100%;
         --danger: 339.20000000000005 90.36% 51.18%;
-        --divider-weight: 1px;
-        --disabled-opacity: 0.5;
-        --font-size-tiny: 0.75rem;
-        --font-size-small: 0.875rem;
-        --font-size-medium: 1rem;
-        --font-size-large: 1.125rem;
-        --line-height-tiny: 1rem;
-        --line-height-small: 1.25rem;
-        --line-height-medium: 1.5rem;
-        --line-height-large: 1.75rem;
-        --radius-small: 8px;
-        --radius-medium: 12px;
-        --radius-large: 14px;
-        --border-width-small: 1px;
-        --border-width-medium: 2px;
-        --border-width-large: 3px;
         --box-shadow-small: 0px 0px 5px 0px rgb(0 0 0 / 0.05), 0px 2px 10px 0px rgb(0 0 0 / 0.2), inset 0px 0px 1px 0px rgb(255 255 255 / 0.15);
         --box-shadow-medium: 0px 0px 15px 0px rgb(0 0 0 / 0.06), 0px 2px 30px 0px rgb(0 0 0 / 0.22), inset 0px 0px 1px 0px rgb(255 255 255 / 0.15);
         --box-shadow-large: 0px 0px 30px 0px rgb(0 0 0 / 0.07), 0px 30px 60px 0px rgb(0 0 0 / 0.26), inset 0px 0px 1px 0px rgb(255 255 255 / 0.15);

@@ -111,7 +111,6 @@ export type ValidationError = {
 }
 
 export type DraftCreate = {
-  title: string
   content: string
   scheduled_time?: Date
 }

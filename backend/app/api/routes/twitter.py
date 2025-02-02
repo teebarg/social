@@ -1,4 +1,5 @@
 import time
+import random  # Add this import for random selection
 
 import requests
 from fastapi import APIRouter, HTTPException
@@ -18,6 +19,14 @@ TWITTER_API_URL = "https://api.twitter.com/2/tweets"
 # Constants
 MAX_RETRIES = 3
 BACKOFF_FACTOR = 2  # Exponential backoff factor
+
+# Set up OAuth1 authentication for Twitter
+auth = OAuth1(
+    client_key=settings.TWITTER_CONSUMER_KEY,
+    client_secret=settings.TWITTER_CONSUMER_SECRET,
+    resource_owner_key=settings.TWITTER_ACCESS_TOKEN,
+    resource_owner_secret=settings.TWITTER_ACCESS_TOKEN_SECRET,
+)
 
 
 # Pydantic model for the tweet content
@@ -46,19 +55,16 @@ async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequ
     content = draft.content
 
     # Validate content length
-    if len(content) > 280:
-        return {
-            "success": False,
-            "error": "Content exceeds the maximum length of 280 characters",
-        }
+    if len(content) > 2800:
+        raise HTTPException(status_code=400, detail="Content exceeds the maximum length of 280 characters")
 
     # Set up OAuth1 authentication for Twitter
-    auth = OAuth1(
-        client_key=settings.TWITTER_CONSUMER_KEY,
-        client_secret=settings.TWITTER_CONSUMER_SECRET,
-        resource_owner_key=settings.TWITTER_ACCESS_TOKEN,
-        resource_owner_secret=settings.TWITTER_ACCESS_TOKEN_SECRET,
-    )
+    # auth = OAuth1(
+    #     client_key=settings.TWITTER_CONSUMER_KEY,
+    #     client_secret=settings.TWITTER_CONSUMER_SECRET,
+    #     resource_owner_key=settings.TWITTER_ACCESS_TOKEN,
+    #     resource_owner_secret=settings.TWITTER_ACCESS_TOKEN_SECRET,
+    # )
 
     # # Create the payload for the tweet
     payload = {"text": content}
@@ -99,9 +105,10 @@ async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequ
                 continue
 
             else:
+                print(response.json())
                 # Other errors
                 raise HTTPException(
-                    status_code=response.status_code, detail=response.json()
+                    status_code=400, detail=response.json()
                 )
 
         except RequestException as e:
@@ -109,6 +116,72 @@ async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequ
             time.sleep(BACKOFF_FACTOR**retries)
             if retries == MAX_RETRIES:
                 raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@router.post("/publish-random-draft")
+async def publish_random_draft(db: SessionDep, current_user: CurrentUser):
+    """
+    Endpoint to publish a random unpublished draft to Twitter.
+
+    Args:
+        db (Session): SQLAlchemy database session.
+
+    Returns:
+        dict: Response from the Twitter API or error details.
+    """
+    # Fetch all unpublished drafts
+    unpublished_drafts = db.query(Draft).filter(Draft.is_published == False).all()
+
+    if not unpublished_drafts:
+        raise HTTPException(status_code=404, detail="No unpublished drafts found")
+
+    # Select a random draft
+    draft = random.choice(unpublished_drafts)
+
+    if not current_user.is_superuser and (draft.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+
+    content = draft.content
+
+    # Validate content length
+    if len(content) > 280:
+        return {
+            "success": False,
+            "error": "Content exceeds the maximum length of 280 characters",
+        }
+
+    # Create the payload for the tweet
+    payload = {"text": content}
+
+    # Make the API request
+    response = requests.post(TWITTER_API_URL, json=payload, auth=auth)
+
+    if response.status_code == 201:
+        # Success: Save to database
+        twitter_response = response.json()
+        new_tweet = Tweet(
+            content=content,
+            twitter_id=twitter_response.get("data", {}).get("id"),
+        )
+        db.add(new_tweet)
+        db.commit()
+
+        # set is_published
+        draft.sqlmodel_update(
+            {"is_published": True, "updated_at": datetime.now()}
+        )
+        db.add(draft)
+        db.commit()
+
+        return {
+            "message": "Random draft published successfully",
+            "tweet": twitter_response,
+        }
+    else:
+        # Handle errors
+        raise HTTPException(
+            status_code=response.status_code, detail=response.json()
+        )
 
 
 # @router.get("/link-preview")

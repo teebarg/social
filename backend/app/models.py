@@ -158,25 +158,31 @@ class TweetsPublic(SQLModel):
 
 class DraftBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
-    content: str = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1, max_length=1255)
     image_url: str | None = Field(default=None, max_length=255)
     link_url: str | None = Field(default=None, max_length=255)
     platform: str | None = Field(default=None, max_length=100)
     scheduled_time: datetime | None = None
     is_published: bool = Field(default=False)
-    created_at: datetime | None = Field(default=datetime.now())
-    updated_at: datetime | None = Field(default=datetime.now())
+    created_at: datetime | None = Field(default_factory=datetime.now)
+    updated_at: datetime | None = Field(default_factory=datetime.now)
 
 
 # Properties to receive on Draft creation
-class DraftCreate(DraftBase):
-    pass
+class DraftCreate(SQLModel):
+    content: str = Field(min_length=1, max_length=1255)
+    image_url: str | None = Field(default=None, max_length=255)
+    scheduled_time: datetime | None = None
+    is_published: bool = Field(default=False)
 
 
 # Properties to receive on Draft update
-class DraftUpdate(DraftBase):
+class DraftUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
     content: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+    image_url: str | None = Field(default=None, max_length=255)
+    scheduled_time: datetime | None = None
+    is_published: bool = Field(default=False)
 
 
 # Database model, database table inferred from class name
