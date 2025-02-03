@@ -88,6 +88,7 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                             <TH>Content</TH>
                             <TH>Actions</TH>
                             <TH>Status</TH>
+                            <TH>Date</TH>
                         </TR>
                     </THead>
                     {isPending ? (
@@ -105,13 +106,10 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                             {posts?.data.map((post: DraftPublic, index: number) => (
                                 <TR key={post.id} className="relative">
                                     <TD>{(page - 1) * PER_PAGE + index + 1})</TD>
-                                    <TD className="truncate max-w-40">{post.title}</TD>
-                                    <TD className="truncate max-w-40">
+                                    <TD className="truncate max-w-28">{post.title}</TD>
+                                    <TD className="truncate max-w-72">
                                         <div className="space-y-2">
                                             <p className="text-default-800">{post.content}</p>
-                                            <div className="text-sm text-default-500">
-                                                {post.created_at && <span>{format(new Date(post.created_at as string), "MMM d, yyyy h:mm a")}</span>}
-                                            </div>
                                             {post.scheduled_time && (
                                                 <div className="flex items-center gap-2 text-sm text-default-500">
                                                     <Calendar className="w-4 h-4" />
@@ -145,6 +143,11 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                                         <span className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(getPostStatus(post))}`}>
                                             {getPostStatus(post)}
                                         </span>
+                                    </TD>
+                                    <TD>
+                                        <div className="text-sm text-default-500">
+                                            {post.created_at && <span>{format(new Date(post.created_at as string), "MMM d, yyyy h:mm a")}</span>}
+                                        </div>
                                     </TD>
                                 </TR>
                             ))}

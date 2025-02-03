@@ -158,7 +158,7 @@ class TweetsPublic(SQLModel):
 
 class DraftBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
-    content: str = Field(min_length=1, max_length=1255)
+    content: str = Field(min_length=1, max_length=280)
     image_url: str | None = Field(default=None, max_length=255)
     link_url: str | None = Field(default=None, max_length=255)
     platform: str | None = Field(default=None, max_length=100)
@@ -170,7 +170,7 @@ class DraftBase(SQLModel):
 
 # Properties to receive on Draft creation
 class DraftCreate(SQLModel):
-    content: str = Field(min_length=1, max_length=1255)
+    content: str = Field(min_length=1, max_length=280)
     image_url: str | None = Field(default=None, max_length=255)
     scheduled_time: datetime | None = None
     is_published: bool = Field(default=False)
@@ -179,7 +179,7 @@ class DraftCreate(SQLModel):
 # Properties to receive on Draft update
 class DraftUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
-    content: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+    content: str | None = Field(default=None, min_length=1, max_length=280)  # type: ignore
     image_url: str | None = Field(default=None, max_length=255)
     scheduled_time: datetime | None = None
     is_published: bool = Field(default=False)
@@ -189,7 +189,6 @@ class DraftUpdate(SQLModel):
 class Draft(DraftBase, table=True):
     __tablename__ = "drafts"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    title: str = Field(max_length=255)
     user_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )

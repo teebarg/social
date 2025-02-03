@@ -119,6 +119,10 @@ class Settings(BaseSettings):
         )
 
         return self
+    
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_PASSWORD: str = "password"
 
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""

@@ -113,6 +113,10 @@ export default {
                 "spinner-ease-spin": "spinner-spin 0.8s ease infinite",
                 "spinner-linear-spin": "spinner-spin 0.8s linear infinite",
             },
+            maxWidth: {
+                "8xl": "88rem", // 1408px
+                "9xl": "96rem", // 1536px
+            },
         },
     },
     plugins: [],

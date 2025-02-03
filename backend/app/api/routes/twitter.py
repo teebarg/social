@@ -55,16 +55,8 @@ async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequ
     content = draft.content
 
     # Validate content length
-    if len(content) > 2800:
+    if len(content) > 280:
         raise HTTPException(status_code=400, detail="Content exceeds the maximum length of 280 characters")
-
-    # Set up OAuth1 authentication for Twitter
-    # auth = OAuth1(
-    #     client_key=settings.TWITTER_CONSUMER_KEY,
-    #     client_secret=settings.TWITTER_CONSUMER_SECRET,
-    #     resource_owner_key=settings.TWITTER_ACCESS_TOKEN,
-    #     resource_owner_secret=settings.TWITTER_ACCESS_TOKEN_SECRET,
-    # )
 
     # # Create the payload for the tweet
     payload = {"text": content}
@@ -106,7 +98,6 @@ async def post_tweet(db: SessionDep, current_user: CurrentUser, tweet: TweetRequ
 
             else:
                 print(response.json())
-                # Other errors
                 raise HTTPException(
                     status_code=400, detail=response.json()
                 )
