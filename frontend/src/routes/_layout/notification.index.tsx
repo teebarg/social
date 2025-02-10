@@ -82,7 +82,7 @@ function SendNotification() {
 
                   <div className="space-y-8">
                     <div className="overflow-hidden shadow rounded-lg">
-                      <div className="px-4 py-5 sm:p-6">
+                      <div className="px-4 sm:px-6">
                         <h2 className="text-lg font-medium text-default-900 mb-4">
                           Preview
                         </h2>
