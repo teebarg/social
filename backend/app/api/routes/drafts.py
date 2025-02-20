@@ -1,6 +1,7 @@
 import uuid
 from typing import Any
 
+from app.utils import generate_title
 from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
@@ -44,6 +45,7 @@ def index(
             .where(Draft.user_id == current_user.id)
             .offset(skip)
             .limit(limit)
+            .order_by(Draft.created_at.desc())
         )
         drafts = session.exec(statement).all()
 
@@ -70,7 +72,7 @@ def create(
     """
     Create new draft.
     """
-    draft = Draft.model_validate(item_in, update={"user_id": current_user.id})
+    draft = Draft.model_validate(item_in, update={"user_id": current_user.id, "title": generate_title(content=item_in.content)})
     session.add(draft)
     session.commit()
     session.refresh(draft)
