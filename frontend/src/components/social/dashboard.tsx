@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import SkeletonText from "@/components/ui/skeleton-text.tsx";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table.tsx";
 import { format } from "date-fns";
-import { Calendar, EditIcon, Trash } from "nui-react-icons";
+import { Calendar, Edit, Trash } from "nui-react-icons";
 import type React from "react";
 import { useState } from "react";
 import { useOverlayTriggerState } from "react-stately";
@@ -127,7 +127,7 @@ const Dashboard: React.FC<Props> = ({ posts, page, setPage, hasNextPage, isPendi
                                                         className="p-2 text-default-600 hover:bg-default-100 rounded-full transition-colors"
                                                         onClick={() => handleEdit(post)}
                                                     >
-                                                        <EditIcon className="w-5 h-5" />
+                                                        <Edit className="w-5 h-5" />
                                                     </button>
                                                     <Button
                                                         className="text-red-600 hover:bg-red-50 rounded-full p-1 min-w-0 h-auto bg-transparent"

@@ -2,7 +2,20 @@ import type { UserPublic } from "@/client/models";
 import { cn } from "@/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Bell, ChevronRight, CogSixTooth, Home, Users, Window } from "nui-react-icons";
+import {
+    Bell,
+    Cart,
+    ChevronRight,
+    CogSixTooth,
+    CogSixToothSolid,
+    DocumentIcon,
+    Home,
+    Layout,
+    MessageSquare,
+    UserGroup,
+    Users,
+    Window,
+} from "nui-react-icons";
 import React, { useState } from "react";
 
 interface MenuItem {
@@ -183,6 +196,42 @@ const Sidebar: React.FC = () => {
                     label: "Admin",
                     href: "/admin",
                     icon: <Users size={18} />,
+                },
+            ],
+        },
+        {
+            subMenu: "Store",
+            icon: <CogSixTooth size={20} />,
+            menuItems: [
+                {
+                    label: "Dashboard",
+                    href: "/store",
+                    icon: <Layout />,
+                },
+                {
+                    label: "Customers",
+                    href: "/store/customers",
+                    icon: <UserGroup />,
+                },
+                {
+                    label: "Products",
+                    href: "/store/products",
+                    icon: <DocumentIcon />,
+                },
+                {
+                    label: "Orders",
+                    href: "/store/orders",
+                    icon: <Cart />,
+                },
+                {
+                    label: "Survey",
+                    href: "/store/survey",
+                    icon: <MessageSquare />,
+                },
+                {
+                    label: "Settings",
+                    href: "/store/settings",
+                    icon: <CogSixToothSolid />,
                 },
             ],
         },
