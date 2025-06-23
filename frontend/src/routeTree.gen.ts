@@ -20,8 +20,11 @@ import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutStoreProductsImport } from './routes/_layout/store/products'
+import { Route as LayoutStoreIndexImport } from './routes/_layout/store/index'
 import { Route as LayoutPostsIndexImport } from './routes/_layout/posts.index'
 import { Route as LayoutNotificationIndexImport } from './routes/_layout/notification.index'
+import { Route as LayoutStoreCustomersImport } from './routes/_layout/store/customers'
 
 // Create/Update Routes
 
@@ -70,6 +73,16 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutStoreProductsRoute = LayoutStoreProductsImport.update({
+  path: '/store/products',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutStoreIndexRoute = LayoutStoreIndexImport.update({
+  path: '/store/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutPostsIndexRoute = LayoutPostsIndexImport.update({
   path: '/posts/',
   getParentRoute: () => LayoutRoute,
@@ -77,6 +90,11 @@ const LayoutPostsIndexRoute = LayoutPostsIndexImport.update({
 
 const LayoutNotificationIndexRoute = LayoutNotificationIndexImport.update({
   path: '/notification/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutStoreCustomersRoute = LayoutStoreCustomersImport.update({
+  path: '/store/customers',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -120,12 +138,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/store/customers': {
+      preLoaderRoute: typeof LayoutStoreCustomersImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/notification/': {
       preLoaderRoute: typeof LayoutNotificationIndexImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/posts/': {
       preLoaderRoute: typeof LayoutPostsIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/store/': {
+      preLoaderRoute: typeof LayoutStoreIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/store/products': {
+      preLoaderRoute: typeof LayoutStoreProductsImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -139,8 +169,11 @@ export const routeTree = rootRoute.addChildren([
     LayoutItemsRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutStoreCustomersRoute,
     LayoutNotificationIndexRoute,
     LayoutPostsIndexRoute,
+    LayoutStoreIndexRoute,
+    LayoutStoreProductsRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,
